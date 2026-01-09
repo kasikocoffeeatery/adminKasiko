@@ -37,7 +37,7 @@ export default function PosterSlider({ posters }: PosterSliderProps) {
   if (posters.length === 0) return null;
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-[30vh] md:h-[92vh] w-full overflow-hidden bg-neutral-950">
       {/* Slides */}
       <div className="relative h-full w-full">
         {posters.map((poster, index) => (
@@ -51,7 +51,7 @@ export default function PosterSlider({ posters }: PosterSliderProps) {
               src={poster.image}
               alt={poster.alt}
               fill
-              className="object-cover"
+              className="object-cover opacity-90"
               priority={index === 0}
               sizes="100vw"
             />
@@ -59,24 +59,27 @@ export default function PosterSlider({ posters }: PosterSliderProps) {
         ))}
       </div>
 
+      {/* Subtle gradient overlay */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%),linear-gradient(to_top,_rgba(0,0,0,0.75),_transparent_45%)]" />
+
       {/* Navigation Arrows */}
       {posters.length > 1 && (
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full shadow-lg transition-all"
+            className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-20 bg-white/40 hover:bg-white text-neutral-900 p-2 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all"
             aria-label="Previous slide"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="md:w-6 md:h-6 w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           <button
             onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/80 hover:bg-white text-gray-900 p-2 rounded-full shadow-lg transition-all"
+            className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-20 bg-white/40 hover:bg-white text-neutral-900 p-2 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all"
             aria-label="Next slide"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="md:w-6 md:h-6 w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -85,7 +88,7 @@ export default function PosterSlider({ posters }: PosterSliderProps) {
 
       {/* Dots Indicator */}
       {posters.length > 1 && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+        <div className="absolute bottom-7 md:bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-2">
           {posters.map((_, index) => (
             <button
               key={index}
@@ -93,7 +96,7 @@ export default function PosterSlider({ posters }: PosterSliderProps) {
               className={`h-2 rounded-full transition-all ${
                 index === currentIndex
                   ? 'w-8 bg-white'
-                  : 'w-2 bg-white/50 hover:bg-white/75'
+                  : 'w-2 bg-white/45 hover:bg-white/75'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

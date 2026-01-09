@@ -18,7 +18,7 @@ export default function MenuGrid({ items }: MenuGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 max-w-6xl mx-auto">
+    <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6 w-full">
       {items.map((item, index) => (
         <div
           key={item.id}

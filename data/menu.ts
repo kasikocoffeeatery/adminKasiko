@@ -24,6 +24,7 @@ export const menuData: MenuItem[] = [
     price: 23000,
     category: 'coffee-milk',
     image: getImagePath('Aren Signature'),
+    isPopular: true,
   },
   {
     id: 'cm-2',

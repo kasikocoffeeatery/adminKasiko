@@ -7,7 +7,10 @@ import Footer from '@/components/Footer';
 import CategoryFilter from '@/components/CategoryFilter';
 import SearchBar from '@/components/SearchBar';
 import MenuGrid from '@/components/MenuGrid';
+import WhatsAppFloatingButton from '@/components/WhatsAppFloatingButton';
 import { menuData } from '@/data/menu';
+import Image from 'next/image';
+import siteContent from '@/data/siteContent.json';
 
 const categories = [
   { id: 'all' as MenuCategory, label: 'Semua Menu', icon: '' },
@@ -31,6 +34,7 @@ const categories = [
 export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState<MenuCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const { menuPage } = siteContent;
 
   const filteredMenu = useMemo(() => {
     let filtered = menuData;
@@ -54,34 +58,41 @@ export default function MenuPage() {
   }, [activeCategory, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-neutral-50">
       <Header />
 
       {/* Page Header */}
-      <section className="bg-white border-b border-gray-200 py-12">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">Menu</h1>
-          <p className="text-gray-600">Pilih menu favorit Anda</p>
+      <section className="w-full justify-center items-center">
+        <div className="w-full justify-center items-center">
+          <Image src={menuPage.headerImage} alt="Menu Header" width={3000} height={1000} />
         </div>
       </section>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+      <main className="max-w-6xl mx-auto px-4 lg:px-0 py-10 md:py-14 space-y-8 md:space-y-10">
         {/* Search Bar */}
         <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
-        {/* Category Filter */}
-        <CategoryFilter
-          categories={categories}
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-        />
+        {/* Layout: Sidebar categories (desktop) + content */}
+        <div className="md:flex md:items-start md:gap-10 lg:gap-12">
+          {/* Category Filter (sticky on desktop) */}
+          <aside className="md:w-56 lg:w-64 md:pt-1 md:border-r md:border-neutral-200/70 md:pr-6 lg:pr-8 md:sticky md:top-24 md:self-start">
+            <CategoryFilter
+              categories={categories}
+              activeCategory={activeCategory}
+              onCategoryChange={setActiveCategory}
+            />
+          </aside>
 
-        {/* Menu Grid */}
-        <MenuGrid items={filteredMenu} />
+          {/* Menu Grid */}
+          <section className="mt-6 md:mt-0 md:flex-1">
+            <MenuGrid items={filteredMenu} />
+          </section>
+        </div>
       </main>
 
       <Footer />
+      <WhatsAppFloatingButton />
     </div>
   );
 }

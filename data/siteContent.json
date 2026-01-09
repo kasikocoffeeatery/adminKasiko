@@ -1,0 +1,38 @@
+{
+  "navigation": {
+    "items": [
+      { "href": "/", "label": "Beranda" },
+      { "href": "/menu", "label": "Menu" }
+    ]
+  },
+  "hero": {
+    "eyebrow": "Kasiko Coffeeatery",
+    "title": "Kopi harian, ruang yang tenang, dan waktu yang berjalan sedikit lebih pelan.",
+    "body": "Kasiko Coffee Eatery menghadirkan pengalaman ngopi yang sederhana namun bermakna. Kopi yang diracik dengan konsisten, hidangan yang nyaman dinikmati kapan saja, dan ruang indoor–outdoor yang dirancang agar kamu bisa berhenti sejenak dari hiruk pikuk."
+  },
+  "bestSeller": {
+    "overline": "Pilihan Pengunjung",
+    "title": "Best Sellers",
+    "description": "Menu yang paling sering kembali dipesan—ringkasan rasa Kasiko yang aman dipilih untuk kunjungan pertama maupun kesekian kali."
+  },
+  "menuPage": {
+    "headerImage": "/images/menuupd.jpg"
+  },
+  "footer": {
+    "description": "Tempat nongkrong nyaman di Rangkasbitung yang memadukan kopi berkualitas, hidangan lezat, dan ruang indoor-outdoor yang hangat untuk berkumpul, bekerja, maupun menikmati waktu bersama.",
+    "addressLabel": "Alamat",
+    "addressText": "Jl. Maulana Yusuf, Aweh, Kec. Kalanganyar, Kabupaten Lebak, Banten",
+    "addressMapUrl": "https://maps.app.goo.gl/ajg1BeNAqq3jzYHY9",
+    "instagramUrl": "https://www.instagram.com/kasiko.coffeeatery/",
+    "instagramHandle": "@kasiko.coffeeatery",
+    "cityLine": "Rangkasbitung • Coffee & Eatery",
+    "copyrightYear": "2026",
+    "logoImage": "/images/kasikoText-White.png"
+  },
+  "whatsapp": {
+    "numberDisplay": "08xx-xxxx-xxxx",
+    "url": "https://wa.me/6280000000000"
+  }
+}
+
+
