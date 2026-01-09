@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kasiko Coffee - Menu & Harga",
+  title: "Kasiko Coffee",
   description: "Lihat menu lengkap Kasiko Coffee dengan berbagai pilihan kopi, makanan, dan dessert",
   icons: {
     icon: '/images/KASIKO (WHITE).png',
