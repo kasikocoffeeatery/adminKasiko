@@ -1,19 +1,21 @@
 export type MenuCategory = 
   | 'all' 
-  | 'coffee-latte'
-  | 'classic-coffee' 
   | 'coffee-milk' 
+  | 'non-coffee' 
+  | 'mocktail' 
   | 'coldbrew' 
   | 'frappe-series' 
-  | 'non-coffee' 
+  | 'tea-based' 
+  | 'manual-brew' 
+  | 'milk-based' 
+  | 'espresso-based' 
+  | 'classic-coffee' 
   | 'basic-tea' 
-  | 'mocktail' 
   | 'ricebowl' 
-  | 'spaghetti' 
   | 'local-dish' 
-  | 'chicken-wings' 
-  | 'snack' 
   | 'cake-cookies' 
+  | 'snack' 
+  | 'spaghetti' 
   | 'sweet-treats';
 
 export interface MenuItem {

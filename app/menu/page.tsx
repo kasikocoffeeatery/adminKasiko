@@ -11,20 +11,20 @@ import { menuData } from '@/data/menu';
 
 const categories = [
   { id: 'all' as MenuCategory, label: 'Semua Menu', icon: '' },
-  { id: 'coffee-latte' as MenuCategory, label: 'Coffee Latte', icon: '' },
-  { id: 'classic-coffee' as MenuCategory, label: 'Classic Coffee', icon: '' },
   { id: 'coffee-milk' as MenuCategory, label: 'Coffee & Milk', icon: '' },
+  { id: 'non-coffee' as MenuCategory, label: 'Non Coffee', icon: '' },
+  { id: 'mocktail' as MenuCategory, label: 'Mocktail', icon: '' },
   { id: 'coldbrew' as MenuCategory, label: 'Coldbrew', icon: '' },
   { id: 'frappe-series' as MenuCategory, label: 'Frappe Series', icon: '' },
-  { id: 'non-coffee' as MenuCategory, label: 'Non Coffee', icon: '' },
-  { id: 'basic-tea' as MenuCategory, label: 'Basic Tea', icon: '' },
-  { id: 'mocktail' as MenuCategory, label: 'Mocktail', icon: '' },
+  { id: 'tea-based' as MenuCategory, label: 'Tea Based', icon: '' },
+  { id: 'manual-brew' as MenuCategory, label: 'Manual Brew', icon: '' },
+  { id: 'milk-based' as MenuCategory, label: 'Milk Based', icon: '' },
+  { id: 'espresso-based' as MenuCategory, label: 'Espresso Based', icon: '' },
   { id: 'ricebowl' as MenuCategory, label: 'Ricebowl', icon: '' },
-  { id: 'spaghetti' as MenuCategory, label: 'Spaghetti', icon: '' },
   { id: 'local-dish' as MenuCategory, label: 'Local Dish', icon: '' },
-  { id: 'chicken-wings' as MenuCategory, label: 'Chicken Wings', icon: '' },
-  { id: 'snack' as MenuCategory, label: 'Snack', icon: '' },
   { id: 'cake-cookies' as MenuCategory, label: 'Cake & Cookies', icon: '' },
+  { id: 'snack' as MenuCategory, label: 'Snack', icon: '' },
+  { id: 'spaghetti' as MenuCategory, label: 'Spaghetti', icon: '' },
   { id: 'sweet-treats' as MenuCategory, label: 'Sweet Treats', icon: '' },
 ];
 
