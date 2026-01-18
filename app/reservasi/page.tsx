@@ -75,6 +75,7 @@ export default function ReservasiPage() {
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(null);
   const [showKategoriModal, setShowKategoriModal] = useState(false);
   const [modalCatatan, setModalCatatan] = useState<string>('');
+  const [modalQuantity, setModalQuantity] = useState<number | ''>('');
   const [selectedKategori, setSelectedKategori] = useState<PriceOption | null>(null);
   const [showCartModal, setShowCartModal] = useState(false);
   const [catatanReview, setCatatanReview] = useState<string>('');
@@ -197,6 +198,7 @@ export default function ReservasiPage() {
   const handleMenuClick = (item: MenuItem) => {
     setSelectedMenuItem(item);
     setModalCatatan('');
+    setModalQuantity('');
     setSelectedKategori(null);
     setShowKategoriModal(true);
   };
@@ -207,6 +209,9 @@ export default function ReservasiPage() {
 
   const handleAddToCart = () => {
     if (!selectedMenuItem || !selectedKategori) return;
+    
+    const quantity = typeof modalQuantity === 'number' ? modalQuantity : 0;
+    if (quantity < 1) return;
 
     const cartItemId = `${selectedMenuItem.id}-${selectedKategori.jenis}`;
     const existingItemIndex = cart.findIndex((item) => item.id === cartItemId);
@@ -216,7 +221,7 @@ export default function ReservasiPage() {
       setCart((prev) =>
         prev.map((item, index) =>
           index === existingItemIndex
-            ? { ...item, quantity: item.quantity + 1, catatan: modalCatatan.trim() || undefined }
+            ? { ...item, quantity: item.quantity + quantity, catatan: modalCatatan.trim() || undefined }
             : item
         )
       );
@@ -227,7 +232,7 @@ export default function ReservasiPage() {
         menuId: selectedMenuItem.id,
         menuName: selectedMenuItem.name,
         kategori: selectedKategori,
-        quantity: 1,
+        quantity: quantity,
         image: selectedMenuItem.image,
         catatan: modalCatatan.trim() || undefined,
       };
@@ -237,6 +242,7 @@ export default function ReservasiPage() {
     setShowKategoriModal(false);
     setSelectedMenuItem(null);
     setModalCatatan('');
+    setModalQuantity('');
     setSelectedKategori(null);
   };
 
@@ -527,14 +533,24 @@ export default function ReservasiPage() {
                       >
                         <div className="group relative overflow-hidden">
                           <div className="md:hidden flex flex-col h-full">
-                            <div className="w-full h-60 overflow-hidden bg-neutral-100 relative">
+                            <div className="w-full aspect-square overflow-hidden bg-neutral-100 relative max-w-full">
                               {item.image ? (
                                 <Image
                                   src={item.image}
                                   alt={item.name}
                                   fill
-                                  className="object-cover transition-transform duration-700 group-hover:scale-110 group-hover:brightness-105"
-                                  sizes="(max-width: 768px) 50vw, 160px"
+                                  className="object-cover object-center transition-transform duration-700 group-hover:scale-110 group-hover:brightness-105"
+                                  style={{ 
+                                    objectFit: 'cover', 
+                                    objectPosition: 'center',
+                                    width: '100%',
+                                    height: '100%',
+                                    maxWidth: '100%',
+                                    maxHeight: '100%'
+                                  }}
+                                  sizes="(max-width: 768px) 50vw, 280px"
+                                  quality={85}
+                                  loading="lazy"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-neutral-900">
@@ -544,7 +560,7 @@ export default function ReservasiPage() {
                               {item.isPopular && (
                                 <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm px-2 py-0.5 rounded-full shadow-[0_10px_25px_rgba(15,23,42,0.25)]">
                                   <span className="text-[9px] font-semibold text-neutral-800 uppercase tracking-[0.18em]">
-                                    Signature
+                                    Best Seller
                                   </span>
                                 </div>
                               )}
@@ -563,14 +579,24 @@ export default function ReservasiPage() {
                           </div>
 
                           <div className="hidden md:flex flex-row h-full">
-                            <div className="w-60 h-60 shrink-0 overflow-hidden bg-neutral-100 relative">
+                            <div className="w-60 aspect-square shrink-0 overflow-hidden bg-neutral-100 relative max-w-full">
                               {item.image ? (
                                 <Image
                                   src={item.image}
                                   alt={item.name}
                                   fill
-                                  className="object-cover transition-transform duration-700 group-hover:scale-105 group-hover:brightness-105"
-                                  sizes="240px"
+                                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105 group-hover:brightness-105"
+                                  style={{ 
+                                    objectFit: 'cover', 
+                                    objectPosition: 'center',
+                                    width: '100%',
+                                    height: '100%',
+                                    maxWidth: '100%',
+                                    maxHeight: '100%'
+                                  }}
+                                  sizes="280px"
+                                  quality={85}
+                                  loading="lazy"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-neutral-900">
@@ -580,7 +606,7 @@ export default function ReservasiPage() {
                               {item.isPopular && (
                                 <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-[0_10px_25px_rgba(15,23,42,0.25)]">
                                   <span className="text-[10px] font-semibold text-neutral-800 uppercase tracking-[0.18em]">
-                                    Signature
+                                    Best Seller
                                   </span>
                                 </div>
                               )}
@@ -652,7 +678,7 @@ export default function ReservasiPage() {
                                 src={item.image}
                                 alt={item.menuName}
                                 fill
-                                className="object-cover"
+                                className="object-cover object-center"
                                 sizes="64px"
                               />
                             </div>
@@ -800,7 +826,7 @@ export default function ReservasiPage() {
                                 src={item.image}
                                 alt={item.menuName}
                                 fill
-                                className="object-cover"
+                                className="object-cover object-center"
                                 sizes="64px"
                               />
                             </div>
@@ -940,6 +966,7 @@ export default function ReservasiPage() {
                   setSelectedMenuItem(null);
                   setSelectedKategori(null);
                   setModalCatatan('');
+                  setModalQuantity('');
                 }}
                 className="text-neutral-400 hover:text-neutral-600"
               >
@@ -970,6 +997,45 @@ export default function ReservasiPage() {
                 ))}
               </div>
               <div>
+                <label htmlFor="jumlah" className="block text-sm font-medium text-neutral-900 mb-2">
+                  Jumlah <span className="text-red-500">*</span>
+                </label>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const current = typeof modalQuantity === 'number' ? modalQuantity : 0;
+                      setModalQuantity(Math.max(1, current - 1));
+                    }}
+                    className="w-10 h-10 flex items-center justify-center border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-neutral-600 hover:text-neutral-900"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    id="jumlah"
+                    min="1"
+                    value={modalQuantity}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setModalQuantity(value === '' ? '' : Math.max(1, parseInt(value) || 1));
+                    }}
+                    className="flex-1 px-4 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm text-center"
+                    placeholder="Masukkan jumlah"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const current = typeof modalQuantity === 'number' ? modalQuantity : 0;
+                      setModalQuantity(current + 1);
+                    }}
+                    className="w-10 h-10 flex items-center justify-center border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-neutral-600 hover:text-neutral-900"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+              <div>
                 <label htmlFor="catatan" className="block text-sm font-medium text-neutral-900 mb-2">
                   Catatan (Opsional)
                 </label>
@@ -984,9 +1050,9 @@ export default function ReservasiPage() {
               </div>
               <button
                 onClick={handleAddToCart}
-                disabled={!selectedKategori}
+                disabled={!selectedKategori || modalQuantity === '' || (typeof modalQuantity === 'number' && modalQuantity < 1)}
                 className={`w-full px-6 py-3 rounded-lg font-medium transition-colors text-sm ${
-                  selectedKategori
+                  selectedKategori && modalQuantity !== '' && typeof modalQuantity === 'number' && modalQuantity >= 1
                     ? 'bg-neutral-900 text-white hover:bg-neutral-800'
                     : 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
                 }`}

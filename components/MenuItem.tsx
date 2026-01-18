@@ -14,14 +14,24 @@ export default function MenuItem({ item }: MenuItemProps) {
       {/* Mobile: Card Style (2 columns) */}
       <div className="md:hidden flex flex-col h-full">
         {/* Image */}
-        <div className="w-full h-60 overflow-hidden bg-neutral-100 relative">
+        <div className="w-full aspect-square overflow-hidden bg-neutral-100 relative max-w-full">
           {item.image ? (
             <Image
               src={item.image}
               alt={item.name}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-110 group-hover:brightness-105"
-              sizes="(max-width: 768px) 50vw, 160px"
+              className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
+              style={{ 
+                objectFit: 'cover', 
+                objectPosition: 'center',
+                width: '100%',
+                height: '100%',
+                maxWidth: '100%',
+                maxHeight: '100%'
+              }}
+              sizes="(max-width: 768px) 50vw, 280px"
+              quality={85}
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-neutral-900">
@@ -31,7 +41,7 @@ export default function MenuItem({ item }: MenuItemProps) {
           {item.isPopular && (
             <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm px-2 py-0.5 rounded-full shadow-[0_10px_25px_rgba(15,23,42,0.25)]">
               <span className="text-[9px] font-semibold text-neutral-800 uppercase tracking-[0.18em]">
-                Signature
+                Best Seller
               </span>
             </div>
           )}
@@ -54,14 +64,24 @@ export default function MenuItem({ item }: MenuItemProps) {
       {/* Desktop: Horizontal Layout (2 columns) */}
       <div className="hidden md:flex flex-row h-full">
         {/* Image */}
-        <div className="w-60 h-60 flex-shrink-0 overflow-hidden bg-neutral-100 relative">
+        <div className="w-60 aspect-square shrink-0 overflow-hidden bg-neutral-100 relative max-w-full">
           {item.image ? (
             <Image
               src={item.image}
               alt={item.name}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-105 group-hover:brightness-105"
-              sizes="240px"
+              className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+              style={{ 
+                objectFit: 'cover', 
+                objectPosition: 'center',
+                width: '100%',
+                height: '100%',
+                maxWidth: '100%',
+                maxHeight: '100%'
+              }}
+              sizes="280px"
+              quality={85}
+              loading="lazy"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-neutral-900">
@@ -71,7 +91,7 @@ export default function MenuItem({ item }: MenuItemProps) {
           {item.isPopular && (
             <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-[0_10px_25px_rgba(15,23,42,0.25)]">
               <span className="text-[10px] font-semibold text-neutral-800 uppercase tracking-[0.18em]">
-                Signature
+                Best Seller
               </span>
             </div>
           )}
