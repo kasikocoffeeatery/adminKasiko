@@ -46,7 +46,7 @@ export default function MenuItem({ item }: MenuItemProps) {
             {item.description}
           </p>
           <span className="text-sm font-semibold text-neutral-900">
-            Rp {item.price.toLocaleString('id-ID')}
+            Rp {item.kategori[0]?.harga.toLocaleString('id-ID') || ''}
           </span>
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function MenuItem({ item }: MenuItemProps) {
           </div>
           <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
             <span className="text-lg md:text-xl font-semibold text-neutral-900">
-              Rp {item.price.toLocaleString('id-ID')}
+              Rp {item.kategori[0]?.harga.toLocaleString('id-ID') || ''}
             </span>
           </div>
         </div>

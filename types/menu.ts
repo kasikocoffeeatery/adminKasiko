@@ -18,11 +18,16 @@ export type MenuCategory =
   | 'spaghetti' 
   | 'sweet-treats';
 
+export interface PriceOption {
+  jenis: string;
+  harga: number;
+}
+
 export interface MenuItem {
   id: string;
   name: string;
   description: string;
-  price: number;
+  kategori: PriceOption[];
   category: MenuCategory;
   image?: string;
   isPopular?: boolean;

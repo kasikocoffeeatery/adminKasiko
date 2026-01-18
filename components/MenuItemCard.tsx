@@ -45,7 +45,7 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
         </p>
         <div className="flex items-center justify-between pt-1">
           <span className="text-[15px] font-semibold text-neutral-900">
-            Rp {item.price.toLocaleString('id-ID')}
+            Rp {item.kategori[0]?.harga.toLocaleString('id-ID') || ''}
           </span>
         </div>
       </div>

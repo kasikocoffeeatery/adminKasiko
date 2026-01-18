@@ -2,6 +2,21 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Environment Variables
+
+Buat file `.env.local` di root project dengan isi:
+
+```env
+# Google Sheets URL for reservation availability
+# Format: https://docs.google.com/spreadsheets/d/{SPREADSHEET_ID}/edit
+# Pastikan sheet di-set ke "Anyone with the link can view"
+NEXT_PUBLIC_GOOGLE_SHEETS_URL=https://docs.google.com/spreadsheets/d/YOUR_SPREADSHEET_ID/edit
+```
+
+Ganti `YOUR_SPREADSHEET_ID` dengan ID spreadsheet kamu.
+
+### Development
+
 First, run the development server:
 
 ```bash
