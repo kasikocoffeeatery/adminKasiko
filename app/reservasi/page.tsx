@@ -17,7 +17,7 @@ interface ReservationForm {
   nama: string;
   email: string;
   noWa: string;
-  jumlahOrang: number;
+  jumlahOrang: number | '';
   tanggalReservasi: string;
   jam: string;
   tempat: string;
@@ -58,7 +58,7 @@ export default function ReservasiPage() {
     nama: '',
     email: '',
     noWa: '',
-    jumlahOrang: 1,
+    jumlahOrang: '',
     tanggalReservasi: '',
     jam: '',
     tempat: '',
@@ -134,7 +134,9 @@ export default function ReservasiPage() {
   // Fetch available places when date or number of people changes
   useEffect(() => {
     const fetchPlaces = async () => {
-      if (!formData.tanggalReservasi || !formData.jumlahOrang) {
+      const jumlahOrangNum = typeof formData.jumlahOrang === 'number' ? formData.jumlahOrang : 0;
+      
+      if (!formData.tanggalReservasi || !jumlahOrangNum || formData.jumlahOrang === '') {
         setAvailablePlaces([]);
         setFormData((prev) => ({ ...prev, tempat: '' }));
         return;
@@ -156,7 +158,7 @@ export default function ReservasiPage() {
         const places = getAvailablePlaces(
           availabilityData,
           formData.tanggalReservasi,
-          formData.jumlahOrang
+          jumlahOrangNum
         );
         
         setAvailablePlaces(places);
@@ -182,7 +184,8 @@ export default function ReservasiPage() {
   const handleNextStep = () => {
     // Validation for step 1
     if (currentStep === 1) {
-      if (!formData.nama || !formData.email || !formData.noWa || !formData.tanggalReservasi || !formData.jam || !formData.tempat) {
+      const jumlahOrangNum = typeof formData.jumlahOrang === 'number' ? formData.jumlahOrang : 0;
+      if (!formData.nama || !formData.email || !formData.noWa || !formData.tanggalReservasi || !formData.jam || !formData.tempat || !jumlahOrangNum || formData.jumlahOrang === '') {
         setError('Mohon lengkapi semua field yang wajib diisi.');
         return;
       }
@@ -400,9 +403,13 @@ export default function ReservasiPage() {
                   id="jumlahOrang"
                   min="1"
                   value={formData.jumlahOrang}
-                  onChange={(e) => handleInputChange('jumlahOrang', parseInt(e.target.value) || 1)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    handleInputChange('jumlahOrang', value === '' ? '' : parseInt(value) || '');
+                  }}
                   required
                   className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm"
+                  placeholder="Masukkan jumlah orang"
                 />
               </div>
 
@@ -443,7 +450,7 @@ export default function ReservasiPage() {
                   <div className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm text-neutral-500">
                     Memuat ketersediaan tempat...
                   </div>
-                ) : availablePlaces.length === 0 && formData.tanggalReservasi && formData.jumlahOrang ? (
+                ) : availablePlaces.length === 0 && formData.tanggalReservasi && typeof formData.jumlahOrang === 'number' && formData.jumlahOrang > 0 ? (
                   <div className="w-full px-4 py-3 border border-yellow-200 bg-yellow-50 rounded-lg text-sm text-yellow-700">
                     Tidak ada tempat yang tersedia untuk tanggal dan jumlah orang ini.
                   </div>
@@ -453,7 +460,7 @@ export default function ReservasiPage() {
                     value={formData.tempat}
                     onChange={(e) => handleInputChange('tempat', e.target.value)}
                     required
-                    disabled={!formData.tanggalReservasi || !formData.jumlahOrang || availablePlaces.length === 0}
+                    disabled={!formData.tanggalReservasi || typeof formData.jumlahOrang !== 'number' || formData.jumlahOrang <= 0 || availablePlaces.length === 0}
                     className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm disabled:bg-neutral-50 disabled:text-neutral-400"
                   >
                     <option value="">Pilih tempat</option>
@@ -1106,15 +1113,15 @@ export default function ReservasiPage() {
                   localStorage.removeItem('reservasi_cart');
                   localStorage.removeItem('reservasi_step');
                   
-                  setFormData({
-                    nama: '',
-                    email: '',
-                    noWa: '',
-                    jumlahOrang: 1,
-                    tanggalReservasi: '',
-                    jam: '',
-                    tempat: '',
-                  });
+                    setFormData({
+                      nama: '',
+                      email: '',
+                      noWa: '',
+                      jumlahOrang: '',
+                      tanggalReservasi: '',
+                      jam: '',
+                      tempat: '',
+                    });
                   setCart([]);
                   setCatatanReview('');
                   setCurrentStep(1);
