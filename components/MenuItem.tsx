@@ -30,7 +30,6 @@ export default function MenuItem({ item }: MenuItemProps) {
                 maxHeight: '100%'
               }}
               sizes="(max-width: 768px) 50vw, 280px"
-              quality={85}
               loading="lazy"
             />
           ) : (
@@ -80,7 +79,6 @@ export default function MenuItem({ item }: MenuItemProps) {
                 maxHeight: '100%'
               }}
               sizes="280px"
-              quality={85}
               loading="lazy"
             />
           ) : (

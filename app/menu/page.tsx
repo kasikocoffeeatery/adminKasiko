@@ -14,6 +14,7 @@ import siteContent from '@/data/siteContent.json';
 
 const categories = [
   { id: 'all' as MenuCategory, label: 'Semua Menu', icon: '' },
+  { id: 'best-seller' as MenuCategory, label: 'Best Seller', icon: '' },
   { id: 'coffee-milk' as MenuCategory, label: 'Coffee & Milk', icon: '' },
   { id: 'non-coffee' as MenuCategory, label: 'Non Coffee', icon: '' },
   { id: 'mocktail' as MenuCategory, label: 'Mocktail', icon: '' },
@@ -39,8 +40,9 @@ export default function MenuPage() {
   const filteredMenu = useMemo(() => {
     let filtered = menuData;
 
-    // Filter by category first
-    if (activeCategory !== 'all') {
+    if (activeCategory === 'best-seller') {
+      filtered = filtered.filter((item) => item.isPopular);
+    } else if (activeCategory !== 'all') {
       filtered = filtered.filter((item) => item.category === activeCategory);
     }
 
