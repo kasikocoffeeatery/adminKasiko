@@ -42,7 +42,9 @@ export default function MenuPage() {
 
     if (activeCategory === 'best-seller') {
       filtered = filtered.filter((item) => item.isPopular);
-    } else if (activeCategory !== 'all') {
+    }
+    // Filter by category first
+    if (activeCategory !== 'all' && activeCategory !== 'best-seller') {
       filtered = filtered.filter((item) => item.category === activeCategory);
     }
 

@@ -37,7 +37,7 @@ export default function PosterSlider({ posters }: PosterSliderProps) {
   if (posters.length === 0) return null;
 
   return (
-    <section className="relative h-[30vh] md:h-[92vh] w-full overflow-hidden bg-neutral-950">
+    <section className="relative h-[30vh] md:h-[92vh] w-full overflow-hidden bg-brand-dark">
       {/* Slides */}
       <div className="relative h-full w-full">
         {posters.map((poster, index) => (
@@ -60,14 +60,14 @@ export default function PosterSlider({ posters }: PosterSliderProps) {
       </div>
 
       {/* Subtle gradient overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%),linear-gradient(to_top,_rgba(0,0,0,0.75),_transparent_45%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_transparent_55%),linear-gradient(to_top,_rgba(41,4,4,0.75),_transparent_45%)]" />
 
       {/* Navigation Arrows */}
       {posters.length > 1 && (
         <>
           <button
             onClick={goToPrevious}
-            className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-20 bg-white/40 hover:bg-white text-neutral-900 p-2 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all"
+            className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-20 bg-white/40 hover:bg-white text-brand-dark p-2 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all"
             aria-label="Previous slide"
           >
             <svg className="md:w-6 md:h-6 w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,7 +76,7 @@ export default function PosterSlider({ posters }: PosterSliderProps) {
           </button>
           <button
             onClick={goToNext}
-            className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-20 bg-white/40 hover:bg-white text-neutral-900 p-2 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all"
+            className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-20 bg-white/40 hover:bg-white text-brand-dark p-2 rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-all"
             aria-label="Next slide"
           >
             <svg className="md:w-6 md:h-6 w-2 h-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

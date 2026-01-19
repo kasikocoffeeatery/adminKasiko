@@ -30,8 +30,8 @@ export default function Header() {
                 href={item.href}
                 className={`pb-1 border-b transition-colors ${
                   isActive(item.href)
-                    ? 'border-neutral-900 text-neutral-900'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-900'
+                    ? 'border-brand-dark text-brand-dark'
+                    : 'border-transparent text-neutral-500 hover:text-brand-dark'
                 }`}
               >
                 {item.label}
@@ -41,7 +41,7 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-neutral-700 hover:text-neutral-900 p-2 rounded-full border border-neutral-200/80 bg-white/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-neutral-300/80"
+            className="md:hidden text-neutral-700 hover:text-brand-dark p-2 rounded-full border border-neutral-200/80 bg-white/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-neutral-300/80"
             aria-label="Toggle navigation"
             aria-expanded={isMobileOpen}
             onClick={() => setIsMobileOpen((prev) => !prev)}
@@ -67,7 +67,7 @@ export default function Header() {
                 href={item.href}
                 className={`flex items-center justify-between px-3 py-2 rounded-lg border text-[12px] ${
                   isActive(item.href)
-                    ? 'border-neutral-900 bg-neutral-900 text-white'
+                    ? 'border-brand-dark bg-brand-dark text-white'
                     : 'border-neutral-200 bg-white/80 text-neutral-600 hover:bg-neutral-50'
                 }`}
                 onClick={() => setIsMobileOpen(false)}

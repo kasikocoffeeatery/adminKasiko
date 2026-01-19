@@ -2,33 +2,34 @@
 
 import Image from 'next/image';
 import { MenuItem as MenuItemType } from '@/types/menu';
+import { useState } from 'react';
 
 interface MenuItemProps {
   item: MenuItemType;
 }
 
 export default function MenuItem({ item }: MenuItemProps) {
+  const [imgError, setImgError] = useState(false);
 
   return (
     <div className="group relative overflow-hidden">
       {/* Mobile: Card Style (2 columns) */}
       <div className="md:hidden flex flex-col h-full">
         {/* Image */}
-        <div className="w-full aspect-square overflow-hidden bg-neutral-100 relative max-w-full">
-          {item.image ? (
+        <div className="w-full aspect-square overflow-hidden bg-neutral-100 relative">
+          {item.image && !imgError ? (
             <Image
               src={item.image}
               alt={item.name}
               fill
               className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
-              style={{ 
-                objectFit: 'cover', 
-                objectPosition: 'center',
-              }}
+              unoptimized
+              onError={() => setImgError(true)}
+              sizes="(max-width: 768px) 50vw, 280px"
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-neutral-900">
+            <div className="w-full h-full flex items-center justify-center bg-brand-dark">
               <span className="text-3xl opacity-20 text-white">☕</span>
             </div>
           )}
@@ -58,21 +59,20 @@ export default function MenuItem({ item }: MenuItemProps) {
       {/* Desktop: Horizontal Layout (2 columns) */}
       <div className="hidden md:flex flex-row h-full">
         {/* Image */}
-        <div className="w-60 aspect-square shrink-0 overflow-hidden bg-neutral-100 relative max-w-full">
-          {item.image ? (
+        <div className="w-60 h-60 shrink-0 overflow-hidden bg-neutral-100 relative">
+          {item.image && !imgError ? (
             <Image
               src={item.image}
               alt={item.name}
               fill
               className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
-              style={{ 
-                objectFit: 'cover', 
-                objectPosition: 'center',
-              }}
+              unoptimized
+              onError={() => setImgError(true)}
+              sizes="280px"
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-neutral-900">
+            <div className="w-full h-full flex items-center justify-center bg-brand-dark">
               <span className="text-4xl opacity-20 text-white">☕</span>
             </div>
           )}

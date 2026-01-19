@@ -6,7 +6,7 @@ export default function Footer() {
   const { footer, navigation, whatsapp } = siteContent;
 
   return (
-    <footer className="mt-16 bg-black">
+    <footer className="mt-16 bg-brand-dark">
       <div className="max-w-6xl mx-auto px-4 lg:px-0 py-10 md:py-14">
         <div className="grid grid-cols-1 md:grid-cols-[1.4fr,1fr,1.1fr] gap-10 md:gap-12">
           {/* About */}
@@ -54,7 +54,7 @@ export default function Footer() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="inline-flex items-center gap-1 text-neutral-300 hover:text-neutral-900 transition-colors text-[13px]"
+                    className="inline-flex items-center gap-1 text-neutral-300 hover:text-white transition-colors text-[13px]"
                   >
                     <span>{item.label}</span>
                   </Link>

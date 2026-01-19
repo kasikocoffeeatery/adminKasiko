@@ -24,7 +24,7 @@ export default function CategoryFilter({
               onClick={() => onCategoryChange(category.id)}
               className={`flex-shrink-0 px-4 py-2 text-xs font-medium rounded-full tracking-[0.14em] uppercase transition-all duration-200 whitespace-nowrap ${
                 activeCategory === category.id
-                  ? 'bg-neutral-900 text-white'
+                  ? 'bg-brand-dark text-white'
                   : 'bg-white text-neutral-500 border border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50'
               }`}
             >
@@ -42,8 +42,8 @@ export default function CategoryFilter({
             onClick={() => onCategoryChange(category.id)}
             className={`group relative flex w-full items-center justify-between rounded-lg px-3 py-2 text-[11px] font-medium tracking-[0.21em] uppercase transition-all duration-200 ${
               activeCategory === category.id
-                ? 'bg-neutral-900 text-white'
-                : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
+                ? 'bg-brand-dark text-white'
+                : 'text-neutral-500 hover:bg-neutral-50 hover:text-brand-dark'
             }`}
           >
             <span className="relative z-10">{category.label}</span>

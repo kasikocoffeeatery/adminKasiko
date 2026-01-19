@@ -40,7 +40,7 @@ export default function SearchBar({ searchQuery, onSearchChange }: SearchBarProp
           value={searchQuery}
           onChange={handleChange}
           placeholder="Cari menu..."
-          className="w-full pl-11 pr-10 py-2.5 text-sm bg-white/95 border border-neutral-200 rounded-full focus:outline-none focus:ring-[1.5px] focus:ring-neutral-900 focus:border-transparent transition-all duration-200 placeholder:text-neutral-400 shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
+          className="w-full pl-11 pr-10 py-2.5 text-sm bg-white/95 border border-neutral-200 rounded-full focus:outline-none focus:ring-[1.5px] focus:ring-brand focus:border-transparent transition-all duration-200 placeholder:text-neutral-400 shadow-[0_12px_30px_rgba(15,23,42,0.06)]"
         />
         {searchQuery && (
           <button

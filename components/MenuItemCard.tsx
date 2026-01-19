@@ -2,37 +2,33 @@
 
 import Image from 'next/image';
 import { MenuItem as MenuItemType } from '@/types/menu';
+import { useState } from 'react';
 
 interface MenuItemCardProps {
   item: MenuItemType;
 }
 
 export default function MenuItemCard({ item }: MenuItemCardProps) {
+  const [imgError, setImgError] = useState(false);
 
   return (
     <div className="group">
       {/* Image */}
-      <div className="w-full aspect-square overflow-hidden bg-neutral-100 relative max-w-full">
-        {item.image ? (
+      <div className="w-full aspect-square overflow-hidden bg-neutral-100 relative">
+        {item.image && !imgError ? (
           <Image
             src={item.image}
             alt={item.name}
             fill
             className="object-cover object-center"
-            style={{ 
-              objectFit: 'cover', 
-              objectPosition: 'center',
-              width: '100%',
-              height: '100%',
-              maxWidth: '100%',
-              maxHeight: '100%'
-            }}
+            unoptimized
+            onError={() => setImgError(true)}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             quality={85}
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-neutral-900">
+          <div className="w-full h-full flex items-center justify-center bg-brand-dark">
             <span className="text-4xl opacity-20 text-white">☕</span>
           </div>
         )}

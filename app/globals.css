@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+/* Brand palette (Tailwind v4 tokens)
+   - Primary: #a83232
+   - Dark:    #290404
+*/
+@theme {
+  --color-brand: #a83232;
+  --color-brand-dark: #290404;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',

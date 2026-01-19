@@ -9,7 +9,7 @@ import { menuData } from '@/data/menu';
 import { MenuItem, MenuCategory, PriceOption } from '@/types/menu';
 import CategoryFilter from '@/components/CategoryFilter';
 import SearchBar from '@/components/SearchBar';
-import MenuGrid from '@/components/MenuGrid';
+import MenuItemView from '@/components/MenuItem';
 import Image from 'next/image';
 import siteContent from '@/data/siteContent.json';
 
@@ -310,7 +310,9 @@ export default function ReservasiPage() {
 
     if (activeCategory === 'best-seller') {
       filtered = filtered.filter((item) => item.isPopular);
-    } else if (activeCategory !== 'all') {
+    }
+
+    if (activeCategory !== 'all' && activeCategory !== 'best-seller') {
       filtered = filtered.filter((item) => item.category === activeCategory);
     }
 
@@ -368,7 +370,7 @@ export default function ReservasiPage() {
                   value={formData.nama}
                   onChange={(e) => handleInputChange('nama', e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm"
                   placeholder="Masukkan nama lengkap"
                 />
               </div>
@@ -383,7 +385,7 @@ export default function ReservasiPage() {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm"
                   placeholder="nama@email.com"
                 />
               </div>
@@ -398,7 +400,7 @@ export default function ReservasiPage() {
                   value={formData.noWa}
                   onChange={(e) => handleInputChange('noWa', e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm"
                   placeholder="081234567890"
                 />
               </div>
@@ -417,7 +419,7 @@ export default function ReservasiPage() {
                     handleInputChange('jumlahOrang', value === '' ? '' : parseInt(value) || '');
                   }}
                   required
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm"
                   placeholder="Masukkan jumlah orang"
                 />
               </div>
@@ -433,7 +435,7 @@ export default function ReservasiPage() {
                   value={formData.tanggalReservasi}
                   onChange={(e) => handleInputChange('tanggalReservasi', e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm"
                 />
               </div>
 
@@ -447,7 +449,7 @@ export default function ReservasiPage() {
                   value={formData.jam}
                   onChange={(e) => handleInputChange('jam', e.target.value)}
                   required
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm"
                 />
               </div>
 
@@ -470,7 +472,7 @@ export default function ReservasiPage() {
                     onChange={(e) => handleInputChange('tempat', e.target.value)}
                     required
                     disabled={!formData.tanggalReservasi || typeof formData.jumlahOrang !== 'number' || formData.jumlahOrang <= 0 || availablePlaces.length === 0}
-                    className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm disabled:bg-neutral-50 disabled:text-neutral-400"
+                    className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm disabled:bg-neutral-50 disabled:text-neutral-400"
                   >
                     <option value="">Pilih tempat</option>
                     {availablePlaces.map((place) => (
@@ -485,7 +487,7 @@ export default function ReservasiPage() {
               <div className="pt-4">
                 <button
                   type="submit"
-                  className="w-full bg-neutral-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-neutral-800 transition-colors text-sm"
+                  className="w-full bg-brand-dark text-white px-6 py-3 rounded-lg font-medium hover:bg-brand transition-colors text-sm"
                 >
                   Lanjut
                 </button>
@@ -528,109 +530,20 @@ export default function ReservasiPage() {
                 <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
                 <div className="mt-6">
                   <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-6">
-                    {filteredMenu.map((item) => (
+                    {filteredMenu.map((item, index) => (
                       <div
                         key={item.id}
-                        onClick={() => handleMenuClick(item)}
-                        className="cursor-pointer group"
+                        className="animate-in fade-in slide-in-from-bottom-4"
+                        style={{ animationDelay: `${index * 50}ms` }}
                       >
-                        <div className="group relative overflow-hidden">
-                          <div className="md:hidden flex flex-col h-full">
-                            <div className="w-full aspect-square overflow-hidden bg-neutral-100 relative max-w-full">
-                              {item.image ? (
-                                <Image
-                                  src={item.image}
-                                  alt={item.name}
-                                  fill
-                                  className="object-cover object-center transition-transform duration-700 group-hover:scale-110 group-hover:brightness-105"
-                                  style={{ 
-                                    objectFit: 'cover', 
-                                    objectPosition: 'center',
-                                    width: '100%',
-                                    height: '100%',
-                                    maxWidth: '100%',
-                                    maxHeight: '100%'
-                                  }}
-                                  sizes="(max-width: 768px) 50vw, 280px"
-                                  quality={85}
-                                  loading="lazy"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-neutral-900">
-                                  <span className="text-3xl opacity-20 text-white">☕</span>
-                                </div>
-                              )}
-                              {item.isPopular && (
-                                <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-sm px-2 py-0.5 rounded-full shadow-[0_10px_25px_rgba(15,23,42,0.25)]">
-                                  <span className="text-[9px] font-semibold text-neutral-800 uppercase tracking-[0.18em]">
-                                    Best Seller
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="p-3.5 flex flex-col flex-1 space-y-1">
-                              <h3 className="text-[13px] font-semibold text-neutral-900 mb-0.5 line-clamp-1 leading-tight tracking-tight">
-                                {item.name}
-                              </h3>
-                              <p className="text-[11px] text-neutral-500 leading-relaxed mb-1 flex-1 line-clamp-4">
-                                {item.description}
-                              </p>
-                              <span className="text-sm font-semibold text-neutral-900">
-                                Rp {item.kategori[0]?.harga.toLocaleString('id-ID') || ''}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="hidden md:flex flex-row h-full">
-                            <div className="w-60 aspect-square shrink-0 overflow-hidden bg-neutral-100 relative max-w-full">
-                              {item.image ? (
-                                <Image
-                                  src={item.image}
-                                  alt={item.name}
-                                  fill
-                                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105 group-hover:brightness-105"
-                                  style={{ 
-                                    objectFit: 'cover', 
-                                    objectPosition: 'center',
-                                    width: '100%',
-                                    height: '100%',
-                                    maxWidth: '100%',
-                                    maxHeight: '100%'
-                                  }}
-                                  sizes="280px"
-                                  quality={85}
-                                  loading="lazy"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-neutral-900">
-                                  <span className="text-4xl opacity-20 text-white">☕</span>
-                                </div>
-                              )}
-                              {item.isPopular && (
-                                <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-[0_10px_25px_rgba(15,23,42,0.25)]">
-                                  <span className="text-[10px] font-semibold text-neutral-800 uppercase tracking-[0.18em]">
-                                    Best Seller
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex-1 p-5 md:p-6 flex flex-col justify-between">
-                              <div>
-                                <h3 className="text-lg md:text-xl font-semibold text-neutral-900 tracking-tight leading-tight">
-                                  {item.name}
-                                </h3>
-                                <p className="text-sm text-neutral-500 leading-relaxed mb-4 line-clamp-4">
-                                  {item.description}
-                                </p>
-                              </div>
-                              <div className="flex items-center justify-between pt-3 border-t border-neutral-100">
-                                <span className="text-lg md:text-xl font-semibold text-neutral-900">
-                                  Rp {item.kategori[0]?.harga.toLocaleString('id-ID') || ''}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleMenuClick(item)}
+                          className="block w-full text-left cursor-pointer"
+                          aria-label={`Pilih menu ${item.name}`}
+                        >
+                          <MenuItemView item={item} />
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -656,7 +569,7 @@ export default function ReservasiPage() {
                       e.stopPropagation();
                       setCurrentStep(3);
                     }}
-                    className="w-full bg-neutral-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-neutral-800 transition-colors text-sm"
+                    className="w-full bg-brand-dark text-white px-6 py-3 rounded-lg font-medium hover:bg-brand transition-colors text-sm"
                   >
                     Checkout
                   </button>
@@ -683,6 +596,7 @@ export default function ReservasiPage() {
                                 fill
                                 className="object-cover object-center"
                                 sizes="64px"
+                                unoptimized
                               />
                             </div>
                           )}
@@ -736,7 +650,7 @@ export default function ReservasiPage() {
                     </div>
                     <button
                       onClick={() => setCurrentStep(3)}
-                      className="w-full bg-neutral-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-neutral-800 transition-colors text-sm"
+                      className="w-full bg-brand-dark text-white px-6 py-3 rounded-lg font-medium hover:bg-brand transition-colors text-sm"
                     >
                       Checkout
                     </button>
@@ -831,6 +745,7 @@ export default function ReservasiPage() {
                                 fill
                                 className="object-cover object-center"
                                 sizes="64px"
+                                unoptimized
                               />
                             </div>
                           )}
@@ -882,7 +797,7 @@ export default function ReservasiPage() {
                   value={catatanReview}
                   onChange={(e) => setCatatanReview(e.target.value)}
                   rows={3}
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm resize-none"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm resize-none"
                   placeholder="Tambahkan catatan khusus untuk reservasi Anda (opsional)"
                 />
               </div>
@@ -945,8 +860,8 @@ export default function ReservasiPage() {
                     }
                   }}
                   disabled={submitting}
-                  className={`flex-1 bg-neutral-900 text-white px-6 py-3 rounded-lg font-medium transition-colors text-sm ${
-                    submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-neutral-800'
+                  className={`flex-1 bg-brand-dark text-white px-6 py-3 rounded-lg font-medium transition-colors text-sm ${
+                    submitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-brand'
                   }`}
                 >
                   {submitting ? 'Mengirim...' : 'Kirim Reservasi'}
@@ -959,7 +874,7 @@ export default function ReservasiPage() {
 
       {/* Modal: Pilih Kategori */}
       {showKategoriModal && selectedMenuItem && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[rgba(41,4,4,0.55)] flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-neutral-900">{selectedMenuItem.name}</h3>
@@ -986,8 +901,8 @@ export default function ReservasiPage() {
                     onClick={() => handleSelectKategori(kat)}
                     className={`w-full text-left p-4 border rounded-lg transition-colors mb-2 ${
                       selectedKategori?.jenis === kat.jenis
-                        ? 'border-neutral-900 bg-neutral-50'
-                        : 'border-neutral-200 hover:border-neutral-900 hover:bg-neutral-50'
+                        ? 'border-brand-dark bg-neutral-50'
+                        : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -1010,7 +925,7 @@ export default function ReservasiPage() {
                       const current = typeof modalQuantity === 'number' ? modalQuantity : 0;
                       setModalQuantity(Math.max(1, current - 1));
                     }}
-                    className="w-10 h-10 flex items-center justify-center border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-neutral-600 hover:text-neutral-900"
+                    className="w-10 h-10 flex items-center justify-center border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-neutral-600 hover:text-brand-dark"
                   >
                     −
                   </button>
@@ -1023,7 +938,7 @@ export default function ReservasiPage() {
                       const value = e.target.value;
                       setModalQuantity(value === '' ? '' : Math.max(1, parseInt(value) || 1));
                     }}
-                    className="flex-1 px-4 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm text-center"
+                    className="flex-1 px-4 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm text-center"
                     placeholder="Masukkan jumlah"
                   />
                   <button
@@ -1032,7 +947,7 @@ export default function ReservasiPage() {
                       const current = typeof modalQuantity === 'number' ? modalQuantity : 0;
                       setModalQuantity(current + 1);
                     }}
-                    className="w-10 h-10 flex items-center justify-center border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-neutral-600 hover:text-neutral-900"
+                    className="w-10 h-10 flex items-center justify-center border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-neutral-600 hover:text-brand-dark"
                   >
                     +
                   </button>
@@ -1047,7 +962,7 @@ export default function ReservasiPage() {
                   value={modalCatatan}
                   onChange={(e) => setModalCatatan(e.target.value)}
                   rows={3}
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent text-sm resize-none"
+                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm resize-none"
                   placeholder="Contoh: Kurang manis, tanpa es, dll"
                 />
               </div>
@@ -1056,7 +971,7 @@ export default function ReservasiPage() {
                 disabled={!selectedKategori || modalQuantity === '' || (typeof modalQuantity === 'number' && modalQuantity < 1)}
                 className={`w-full px-6 py-3 rounded-lg font-medium transition-colors text-sm ${
                   selectedKategori && modalQuantity !== '' && typeof modalQuantity === 'number' && modalQuantity >= 1
-                    ? 'bg-neutral-900 text-white hover:bg-neutral-800'
+                    ? 'bg-brand-dark text-white hover:bg-brand'
                     : 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
                 }`}
               >
@@ -1069,7 +984,7 @@ export default function ReservasiPage() {
 
       {/* Modal: Cart Detail (Mobile) */}
       {showCartModal && (
-        <div className="md:hidden fixed inset-0 bg-black/50 z-50" onClick={() => setShowCartModal(false)}>
+        <div className="md:hidden fixed inset-0 bg-[rgba(41,4,4,0.55)] z-50" onClick={() => setShowCartModal(false)}>
           <div 
             className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[85vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
@@ -1100,6 +1015,7 @@ export default function ReservasiPage() {
                                 fill
                                 className="object-cover"
                                 sizes="64px"
+                                unoptimized
                               />
                             </div>
                           )}
@@ -1156,7 +1072,7 @@ export default function ReservasiPage() {
                         setShowCartModal(false);
                         setCurrentStep(3);
                       }}
-                      className="w-full bg-neutral-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-neutral-800 transition-colors text-sm"
+                      className="w-full bg-brand-dark text-white px-6 py-3 rounded-lg font-medium hover:bg-brand transition-colors text-sm"
                     >
                       Checkout
                     </button>
@@ -1170,7 +1086,7 @@ export default function ReservasiPage() {
 
       {/* Modal: Pembayaran */}
       {showPaymentModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-[rgba(41,4,4,0.55)] flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-neutral-900">Pembayaran</h3>
@@ -1210,8 +1126,8 @@ export default function ReservasiPage() {
                     onClick={() => setPaymentType('lunas')}
                     className={`w-full text-left p-4 border rounded-lg transition-colors ${
                       paymentType === 'lunas'
-                        ? 'border-neutral-900 bg-neutral-50'
-                        : 'border-neutral-200 hover:border-neutral-900 hover:bg-neutral-50'
+                        ? 'border-brand-dark bg-neutral-50'
+                        : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -1225,8 +1141,8 @@ export default function ReservasiPage() {
                     onClick={() => setPaymentType('dp')}
                     className={`w-full text-left p-4 border rounded-lg transition-colors ${
                       paymentType === 'dp'
-                        ? 'border-neutral-900 bg-neutral-50'
-                        : 'border-neutral-200 hover:border-neutral-900 hover:bg-neutral-50'
+                        ? 'border-brand-dark bg-neutral-50'
+                        : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
