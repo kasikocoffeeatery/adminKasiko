@@ -3,9 +3,12 @@ import { MenuItem } from '@/types/menu';
 // Helper function to convert menu name to image filename
 // Converts name to uppercase and replaces spaces/hyphens with underscores
 function getImagePath(name: string): string {
-  const filename = name
-    .toUpperCase()
-  return `/images/menu/${filename}.png`;
+  // IMPORTANT:
+  // - Windows (localhost) is case-insensitive, but production (Linux/Vercel) is case-sensitive.
+  // - Do NOT uppercase the whole path (it will also uppercase folder names, e.g. `coffee&milk` -> `COFFEE&MILK`).
+  // Keep the given folder/name, and handle filename-case differences at render time (see MenuItem fallback).
+  const normalized = name.replace(/\\/g, '/');
+  return `/images/menu/${normalized}.png`;
 }
 
 // Menu data Kasiko Coffee

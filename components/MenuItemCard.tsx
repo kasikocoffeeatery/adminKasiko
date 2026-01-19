@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { MenuItem as MenuItemType } from '@/types/menu';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface MenuItemCardProps {
   item: MenuItemType;
@@ -10,19 +10,56 @@ interface MenuItemCardProps {
 
 export default function MenuItemCard({ item }: MenuItemCardProps) {
   const [imgError, setImgError] = useState(false);
+  const [imgSrc, setImgSrc] = useState<string | undefined>(item.image);
+  const [imgAttempt, setImgAttempt] = useState<0 | 1 | 2>(0);
+
+  const toUppercaseBasename = (src: string) => {
+    const [path, query] = src.split('?');
+    const parts = path.split('/');
+    const base = parts.pop() ?? '';
+    const next = [...parts, base.toUpperCase()].join('/');
+    return query ? `${next}?${query}` : next;
+  };
+
+  const toLowercaseBasename = (src: string) => {
+    const [path, query] = src.split('?');
+    const parts = path.split('/');
+    const base = parts.pop() ?? '';
+    const next = [...parts, base.toLowerCase()].join('/');
+    return query ? `${next}?${query}` : next;
+  };
+
+  useEffect(() => {
+    setImgError(false);
+    setImgAttempt(0);
+    setImgSrc(item.image);
+  }, [item.image]);
 
   return (
     <div className="group">
       {/* Image */}
       <div className="w-full aspect-square overflow-hidden bg-neutral-100 relative">
-        {item.image && !imgError ? (
+        {imgSrc && !imgError ? (
           <Image
-            src={item.image}
+            src={imgSrc}
             alt={item.name}
             fill
             className="object-cover object-center"
             unoptimized
-            onError={() => setImgError(true)}
+            onError={() => {
+              if (!imgSrc) return setImgError(true);
+              if (imgAttempt === 0) {
+                setImgAttempt(1);
+                setImgSrc(toUppercaseBasename(imgSrc));
+                return;
+              }
+              if (imgAttempt === 1) {
+                setImgAttempt(2);
+                setImgSrc(toLowercaseBasename(imgSrc));
+                return;
+              }
+              setImgError(true);
+            }}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             quality={85}
             loading="lazy"
