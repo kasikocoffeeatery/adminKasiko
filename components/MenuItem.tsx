@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { MenuItem as MenuItemType } from '@/types/menu';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface MenuItemProps {
   item: MenuItemType;
@@ -10,31 +10,6 @@ interface MenuItemProps {
 
 export default function MenuItem({ item }: MenuItemProps) {
   const [imgError, setImgError] = useState(false);
-  const [imgSrc, setImgSrc] = useState<string | undefined>(item.image);
-  const [imgAttempt, setImgAttempt] = useState<0 | 1 | 2>(0);
-
-  const toUppercaseBasename = (src: string) => {
-    const [path, query] = src.split('?');
-    const parts = path.split('/');
-    const base = parts.pop() ?? '';
-    const next = [...parts, base.toUpperCase()].join('/');
-    return query ? `${next}?${query}` : next;
-  };
-
-  const toLowercaseBasename = (src: string) => {
-    const [path, query] = src.split('?');
-    const parts = path.split('/');
-    const base = parts.pop() ?? '';
-    const next = [...parts, base.toLowerCase()].join('/');
-    return query ? `${next}?${query}` : next;
-  };
-
-  // Reset image state if the item changes
-  useEffect(() => {
-    setImgError(false);
-    setImgAttempt(0);
-    setImgSrc(item.image);
-  }, [item.image]);
 
   return (
     <div className="group relative overflow-hidden">
@@ -42,27 +17,14 @@ export default function MenuItem({ item }: MenuItemProps) {
       <div className="md:hidden flex flex-col h-full">
         {/* Image */}
         <div className="w-full aspect-square overflow-hidden bg-neutral-100 relative">
-          {imgSrc && !imgError ? (
+          {item.image && !imgError ? (
             <Image
-              src={imgSrc}
+              src={item.image}
               alt={item.name}
               fill
               className="object-cover object-center transition-transform duration-700 group-hover:scale-110"
               unoptimized
-              onError={() => {
-                if (!imgSrc) return setImgError(true);
-                if (imgAttempt === 0) {
-                  setImgAttempt(1);
-                  setImgSrc(toUppercaseBasename(imgSrc));
-                  return;
-                }
-                if (imgAttempt === 1) {
-                  setImgAttempt(2);
-                  setImgSrc(toLowercaseBasename(imgSrc));
-                  return;
-                }
-                setImgError(true);
-              }}
+              onError={() => setImgError(true)}
               sizes="(max-width: 768px) 50vw, 280px"
               loading="lazy"
             />
@@ -98,27 +60,14 @@ export default function MenuItem({ item }: MenuItemProps) {
       <div className="hidden md:flex flex-row h-full">
         {/* Image */}
         <div className="w-60 h-60 shrink-0 overflow-hidden bg-neutral-100 relative">
-          {imgSrc && !imgError ? (
+          {item.image && !imgError ? (
             <Image
-              src={imgSrc}
+              src={item.image}
               alt={item.name}
               fill
               className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
               unoptimized
-              onError={() => {
-                if (!imgSrc) return setImgError(true);
-                if (imgAttempt === 0) {
-                  setImgAttempt(1);
-                  setImgSrc(toUppercaseBasename(imgSrc));
-                  return;
-                }
-                if (imgAttempt === 1) {
-                  setImgAttempt(2);
-                  setImgSrc(toLowercaseBasename(imgSrc));
-                  return;
-                }
-                setImgError(true);
-              }}
+              onError={() => setImgError(true)}
               sizes="280px"
               loading="lazy"
             />

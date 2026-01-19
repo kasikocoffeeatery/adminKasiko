@@ -3,12 +3,8 @@ import { MenuItem } from '@/types/menu';
 // Helper function to convert menu name to image filename
 // Converts name to uppercase and replaces spaces/hyphens with underscores
 function getImagePath(name: string): string {
-  // IMPORTANT:
-  // - Windows (localhost) is case-insensitive, but production (Linux/Vercel) is case-sensitive.
-  // - Do NOT uppercase the whole path (it will also uppercase folder names, e.g. `coffee&milk` -> `COFFEE&MILK`).
-  // Keep the given folder/name, and handle filename-case differences at render time (see MenuItem fallback).
-  const normalized = name.replace(/\\/g, '/');
-  return `/images/menu/${normalized}.png`;
+  const filename = name.toUpperCase();
+  return `/images/menu/${filename}.png`;
 }
 
 // Menu data Kasiko Coffee
@@ -511,7 +507,7 @@ export const menuData: MenuItem[] = [
     description: 'Cheesecake lembut dengan tekstur creamy yang meleleh di mulut, dipadukan dengan manis legit saus karamel.',
     kategori: [{ jenis: 'Normal', harga: 28000 }],
     category: 'cake-cookies',
-    image: getImagePath('NEW YORK CHEESE CAKE WITH CARAMEL SAUCE'),
+    image: getImagePath('CAKE&COOKIES/New York Cheese Cake with Caramel Sauce'),
   },
   {
     id: 'ck-2',
@@ -519,7 +515,7 @@ export const menuData: MenuItem[] = [
     description: 'Cheesecake lembut nan creamy berpadu dengan segarnya berry compote yang manis dan asam. Setiap suapan menghadirkan harmoni rasa gurih dari cream cheese dan kesegaran buah beri yang kaya akan aroma',
     kategori: [{ jenis: 'Normal', harga: 28000 }],
     category: 'cake-cookies',
-    image: getImagePath('NEW YORK CHEESE CAKE WITH BLUEBERRY SAUCE'),
+    image: getImagePath('CAKE&COOKIES/New York Cheese Cake with Berry Compote'),
   },
   {
     id: 'ck-3',
@@ -527,7 +523,7 @@ export const menuData: MenuItem[] = [
     description: '',
     kategori: [{ jenis: 'Normal', harga: 25000 }],
     category: 'cake-cookies',
-    image: getImagePath('New York Cheese Cake Original'),
+    image: getImagePath('CAKE&COOKIES/New York Cheese Cake Original'),
   },
   {
     id: 'ck-4',
@@ -535,7 +531,7 @@ export const menuData: MenuItem[] = [
     description: 'Kukis dengan rasa red velvet yang lembut dan kaya',
     kategori: [{ jenis: 'Normal', harga: 17000 }],
     category: 'cake-cookies',
-    image: getImagePath('Cookies Red Velvet'),
+    image: getImagePath('CAKE&COOKIES/Cookies Red Velvet'),
     isPopular: true,
   },
   {
@@ -544,7 +540,7 @@ export const menuData: MenuItem[] = [
     description: 'Kukis dengan rasa matcha yang lembut dan kaya',
     kategori: [{ jenis: 'Normal', harga: 17000 }],
     category: 'cake-cookies',
-    image: getImagePath('Cookies Matcha'),
+    image: getImagePath('CAKE&COOKIES/Cookies Matcha'),
     isPopular: true,
   },
   {
@@ -553,7 +549,7 @@ export const menuData: MenuItem[] = [
     description: 'Kukis dengan rasa cookies and cream yang lembut dan kaya',
     kategori: [{ jenis: 'Normal', harga: 17000 }],
     category: 'cake-cookies',
-    image: getImagePath('Cookies and Cream'),
+    image: getImagePath('CAKE&COOKIES/Cookies and Cream'),
     isPopular: true,
   },
   {
@@ -562,7 +558,7 @@ export const menuData: MenuItem[] = [
     description: 'Kukis dengan rasa original yang lembut dan kaya',
     kategori: [{ jenis: 'Normal', harga: 15000 }],
     category: 'cake-cookies',
-    image: getImagePath('Cookies Original'),
+    image: getImagePath('CAKE&COOKIES/Cookies Original'),
   },
 
   // Snack
