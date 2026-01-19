@@ -24,12 +24,7 @@ export default function MenuItem({ item }: MenuItemProps) {
               style={{ 
                 objectFit: 'cover', 
                 objectPosition: 'center',
-                width: '100%',
-                height: '100%',
-                maxWidth: '100%',
-                maxHeight: '100%'
               }}
-              sizes="(max-width: 768px) 50vw, 280px"
               loading="lazy"
             />
           ) : (
@@ -73,12 +68,7 @@ export default function MenuItem({ item }: MenuItemProps) {
               style={{ 
                 objectFit: 'cover', 
                 objectPosition: 'center',
-                width: '100%',
-                height: '100%',
-                maxWidth: '100%',
-                maxHeight: '100%'
               }}
-              sizes="280px"
               loading="lazy"
             />
           ) : (
