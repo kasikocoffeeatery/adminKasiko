@@ -18,7 +18,7 @@ export default function Footer() {
               <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-neutral-400 mb-1">
                 {footer.addressLabel}
               </p>
-              <Link href={footer.addressMapUrl} className="flex items-center gap-2">
+              <Link href={footer.addressMapUrl} className="flex items-center gap-2" target="_blank">
                 <svg
                   className="w-5 h-5 text-neutral-200"
                   fill="none"
