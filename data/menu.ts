@@ -88,7 +88,7 @@ export const menuData: MenuItem[] = [
     description: 'Syrup Butterscotch Yang Manis Dipadu Dengan Segarnya Freshmilk dan Esspreso',
     kategori: [{ jenis: 'Reguler', harga: 25000 }, { jenis: 'Large', harga: 35000 }],
     category: 'coffee-milk',
-    image: getImagePath('coffee&milk/Butterscotch'),
+    image: getImagePath('coffee&milk/Butterscotch Creme'),
   },
   {
     id: 'cm-10',
@@ -239,7 +239,7 @@ export const menuData: MenuItem[] = [
     description: '',
     kategori: [{ jenis: 'Normal', harga: 23000 }],
     category: 'coldbrew',
-    image: getImagePath('Mangifera Indica'),
+    image: getImagePath('coldbrew/Mangifera Indica'),
     isPopular: true,
   },
   {
@@ -248,7 +248,7 @@ export const menuData: MenuItem[] = [
     description: '',
     kategori: [{ jenis: 'Normal', harga: 23000 }],
     category: 'coldbrew',
-    image: getImagePath('Malus Domestica'),
+    image: getImagePath('coldbrew/Malus Domestica'),
   },
 
   // Frappe Series
@@ -336,7 +336,7 @@ export const menuData: MenuItem[] = [
     description: 'Espresso dengan susu steamed yang creamy dan halus',
     kategori: [{ jenis: 'Hot', harga: 20000 }, { jenis: 'Cold', harga: 20000 }],
     category: 'milk-based',
-    image: getImagePath('milkbased/CAFFEE LATTE'),
+    image: getImagePath('milkbased/CAFFE LATTE'),
   },
   {
     id: 'mb-2',
@@ -368,7 +368,7 @@ export const menuData: MenuItem[] = [
     description: 'Espresso dengan susu steamed tanpa foam',
     kategori: [{ jenis: 'Normal', harga: 20000 }],
     category: 'milk-based',
-    image: getImagePath('milkbased/Flat Whie'),
+    image: getImagePath('milkbased/Flat White'),
   },
 
   // Espresso Based
@@ -378,7 +378,7 @@ export const menuData: MenuItem[] = [
     description: 'Espresso dengan air panas',
     kategori: [{ jenis: 'Hot', harga: 20000 }, { jenis: 'Cold', harga: 20000 }],
     category: 'espresso-based',
-    image: getImagePath('Americano'),
+    image: getImagePath('espressobased/Black'),
   },
   {
     id: 'eb-2',
@@ -386,7 +386,7 @@ export const menuData: MenuItem[] = [
     description: 'Espresso dengan air panas yang lebih banyak',
     kategori: [{ jenis: 'Normal', harga: 8000 }],
     category: 'espresso-based',
-    image: getImagePath('Single Shot'),
+    image: getImagePath('espressobased/Single Shoot'),
   },
   {
     id: 'eb-3',
@@ -394,7 +394,7 @@ export const menuData: MenuItem[] = [
     description: 'Espresso dengan air panas yang lebih banyak',
     kategori: [{ jenis: 'Normal', harga: 16000 }],
     category: 'espresso-based',
-    image: getImagePath('Double Shot'),
+    image: getImagePath('espressobased/Double Shoot'),
   },
   
   // Ricebowl
