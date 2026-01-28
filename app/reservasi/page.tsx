@@ -292,16 +292,11 @@ export default function ReservasiPage() {
     return cleaned + '@c.us';
   };
 
-  // Format menu untuk spreadsheet: menu-kategori-jumlah-catatan, menu-kategori-jumlah-catatan
+  // Format menu untuk spreadsheet: menu-kategori-jumlah(catatan), menu-kategori-jumlah(catatan)
   const formatMenuItems = (cartItems: CartItem[]): string => {
     return cartItems.map((item) => {
-      const parts = [
-        item.menuName,
-        item.kategori.jenis,
-        item.quantity.toString(),
-        item.catatan || ''
-      ];
-      return parts.join('-');
+      const base = `${item.menuName}-${item.kategori.jenis}-${item.quantity.toString()}`;
+      return item.catatan ? `${base}(${item.catatan})` : base;
     }).join(', ');
   };
 
