@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { formatReservationPlaceLabel } from '@/data/reservationPlaces';
 
 /**
  * API route to submit reservation data to Google Sheets via Google Apps Script
@@ -23,7 +24,8 @@ export async function POST(request: NextRequest) {
     const payload = {
       nama: body.nama || '',
       jumlahOrang: body.jumlahOrang || '',
-      tempat: body.tempat || '',
+      // Allow sending either raw id ("B1") or already formatted ("Semi Outdoor B1").
+      tempat: formatReservationPlaceLabel(body.tempat || ''),
       tanggal: body.tanggal || '',
       jam: body.jam || '',
       menu: body.menu || '',

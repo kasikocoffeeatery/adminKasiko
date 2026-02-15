@@ -6,6 +6,8 @@
  * @param sheetId - Sheet ID (gid parameter), defaults to 0 for first sheet
  * @returns CSV data as string
  */
+import { formatReservationPlaceLabel, reservationTablesById } from '@/data/reservationPlaces';
+
 export async function fetchGoogleSheetCSV(
   spreadsheetUrl: string,
   sheetId: number = 0
@@ -121,9 +123,12 @@ export interface AvailabilityRow {
  */
 export async function fetchAvailabilityData(
   spreadsheetUrl: string,
-  sheetId: number = 0
+  sheetId?: number
 ): Promise<AvailabilityRow[]> {
-  const csvText = await fetchGoogleSheetCSV(spreadsheetUrl, sheetId);
+  const inferredGid = extractGidFromSheetUrl(spreadsheetUrl);
+  const resolvedSheetId = typeof sheetId === 'number' ? sheetId : inferredGid ?? 0;
+
+  const csvText = await fetchGoogleSheetCSV(spreadsheetUrl, resolvedSheetId);
   const parsed = parseCSV(csvText);
   
   return parsed as AvailabilityRow[];
@@ -164,42 +169,70 @@ export function getAvailablePlaces(
     console.warn('No matching date found:', selectedDate, 'Available dates:', availabilityData.map(r => r.Tanggal || r.tanggal));
     return [];
   }
-  
-  const availablePlaces: string[] = [];
-  
-  // Check each place type - match exact column names from spreadsheet
-  const places = [
-    { name: 'Indoor', keys: ['Tersedia Indoor', 'tersedia indoor'] },
-    { name: 'Outdoor', keys: ['Tersedia Outdoor', 'tersedia outdoor'] },
-    { name: 'Semi Outdoor', keys: ['Tersedia Semi Outdoor', 'tersedia semi outdoor'] },
-  ];
-  
-  // Use a Set to track which place names we've already added
-  const addedPlaces = new Set<string>();
-  
-  places.forEach((place) => {
-    // Try each possible key name (case variations)
-    for (const key of place.keys) {
-      const availableStr = dateRow[key];
-      if (availableStr !== undefined && availableStr !== null && availableStr.trim() !== '') {
-        // Parse number - remove any non-numeric characters except minus sign
-        const cleaned = availableStr.trim().replace(/[^\d-]/g, '');
-        const available = parseInt(cleaned, 10);
-        
-        if (!isNaN(available) && available >= numberOfPeople) {
-          if (!addedPlaces.has(place.name)) {
-            availablePlaces.push(place.name);
-            addedPlaces.add(place.name);
+
+  // Mode 1 (legacy): availability per area (number of seats available per area)
+  const hasAreaColumns =
+    typeof dateRow['Tersedia Indoor'] !== 'undefined' ||
+    typeof dateRow['tersedia indoor'] !== 'undefined' ||
+    typeof dateRow['Tersedia Outdoor'] !== 'undefined' ||
+    typeof dateRow['tersedia outdoor'] !== 'undefined' ||
+    typeof dateRow['Tersedia Semi Outdoor'] !== 'undefined' ||
+    typeof dateRow['tersedia semi outdoor'] !== 'undefined';
+
+  if (hasAreaColumns) {
+    const availableAreas: string[] = [];
+
+    // Check each place type - match exact column names from spreadsheet
+    const places = [
+      { name: 'Indoor', keys: ['Tersedia Indoor', 'tersedia indoor'] },
+      { name: 'Outdoor', keys: ['Tersedia Outdoor', 'tersedia outdoor'] },
+      { name: 'Semi Outdoor', keys: ['Tersedia Semi Outdoor', 'tersedia semi outdoor'] },
+    ];
+
+    const addedPlaces = new Set<string>();
+
+    places.forEach((place) => {
+      for (const key of place.keys) {
+        const availableStr = dateRow[key];
+        if (availableStr !== undefined && availableStr !== null && availableStr.trim() !== '') {
+          const cleaned = availableStr.trim().replace(/[^\d-]/g, '');
+          const available = parseInt(cleaned, 10);
+
+          if (!isNaN(available) && available >= numberOfPeople) {
+            if (!addedPlaces.has(place.name)) {
+              availableAreas.push(place.name);
+              addedPlaces.add(place.name);
+            }
+            break;
           }
-          break; // Found a match, no need to try other keys for this place
         }
       }
+    });
+
+    console.log('Available areas for', selectedDate, numberOfPeople, 'people:', availableAreas, 'Row data:', dateRow);
+    return availableAreas;
+  }
+
+  // Mode 2 (new): availability per table/spot, value "Tersedia" / "Tidak tersedia"
+  // Spreadsheet headers follow format: "Indoor A1", "Semi Outdoor B1", "Atas G2", etc.
+  // Return list of table IDs (e.g. ["A1","B1","G2"]).
+  const availableTableIds: string[] = [];
+
+  const isTruthyAvailable = (raw: string) => {
+    const v = raw.trim().toLowerCase();
+    return v === 'tersedia' || v === 'available' || v === 'ya' || v === 'yes' || v === '1' || v === 'true';
+  };
+
+  for (const tableId of Object.keys(reservationTablesById)) {
+    const col = formatReservationPlaceLabel(tableId);
+    const value = (dateRow[col] ?? dateRow[col.toLowerCase()] ?? '').toString();
+    if (value && isTruthyAvailable(value)) {
+      availableTableIds.push(tableId);
     }
-  });
-  
-  console.log('Available places for', selectedDate, numberOfPeople, 'people:', availablePlaces, 'Row data:', dateRow);
-  
-  return availablePlaces;
+  }
+
+  console.log('Available tables for', selectedDate, numberOfPeople, 'people:', availableTableIds, 'Row data:', dateRow);
+  return availableTableIds;
 }
 
 /**
@@ -207,17 +240,44 @@ export function getAvailablePlaces(
  */
 function normalizeDate(dateStr: string): string {
   if (!dateStr) return '';
+
+  const s = String(dateStr).trim();
+
+  // Exact ISO already present
+  const iso = s.match(/(\d{4})-(\d{2})-(\d{2})/);
+  if (iso) return iso[0];
+
+  // Common formats from Sheets / locale:
+  // - DD/MM/YYYY or D/M/YYYY
+  // - DD-MM-YYYY or D-M-YYYY
+  const dmy = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if (dmy) {
+    const day = dmy[1].padStart(2, '0');
+    const month = dmy[2].padStart(2, '0');
+    const year = dmy[3];
+    return `${year}-${month}-${day}`;
+  }
+
+  // US-ish: MM/DD/YYYY
+  const mdy = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if (mdy) {
+    // If ambiguous (<=12 both), prefer DD/MM (Indo common) already handled above.
+    // This block is mainly for inputs like "2/15/2026" (month/day/year).
+    const monthNum = Number(mdy[1]);
+    const dayNum = Number(mdy[2]);
+    if (monthNum >= 1 && monthNum <= 12 && dayNum >= 13 && dayNum <= 31) {
+      const month = String(monthNum).padStart(2, '0');
+      const day = String(dayNum).padStart(2, '0');
+      const year = mdy[3];
+      return `${year}-${month}-${day}`;
+    }
+  }
   
   // Try to parse various date formats
-  const date = new Date(dateStr);
+  const date = new Date(s);
   
   if (isNaN(date.getTime())) {
-    // If parsing fails, try to extract date from string
-    const match = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
-    if (match) {
-      return match[0];
-    }
-    return dateStr.trim();
+    return s;
   }
   
   // Format as YYYY-MM-DD
@@ -226,5 +286,13 @@ function normalizeDate(dateStr: string): string {
   const day = String(date.getDate()).padStart(2, '0');
   
   return `${year}-${month}-${day}`;
+}
+
+function extractGidFromSheetUrl(url: string): number | null {
+  if (!url) return null;
+  const match = String(url).match(/[?&#]gid=(\d+)/);
+  if (!match) return null;
+  const gid = parseInt(match[1], 10);
+  return Number.isFinite(gid) ? gid : null;
 }
 

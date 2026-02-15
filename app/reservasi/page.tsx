@@ -12,6 +12,8 @@ import SearchBar from '@/components/SearchBar';
 import MenuItemView from '@/components/MenuItem';
 import Image from 'next/image';
 import siteContent from '@/data/siteContent.json';
+import ReservationPlaceLayout from '@/components/ReservationPlaceLayout';
+import { formatReservationPlaceLabel, reservationTablesById } from '@/data/reservationPlaces';
 
 interface ReservationForm {
   nama: string;
@@ -162,11 +164,26 @@ export default function ReservasiPage() {
           formData.tanggalReservasi,
           jumlahOrangNum
         );
+
+        // `getAvailablePlaces` supports 2 modes:
+        // - legacy: returns area keys ["Indoor","Semi Outdoor","Outdoor"]
+        // - new sheet: returns table IDs ["A1","B1","G2"]
+        const isAreaMode = places.some((p) => p === 'Indoor' || p === 'Semi Outdoor' || p === 'Outdoor');
+        const availableTableIds = isAreaMode
+          ? Object.keys(reservationTablesById).filter((id) => places.includes(reservationTablesById[id].areaKey))
+          : places;
+
+        setAvailablePlaces(availableTableIds);
         
-        setAvailablePlaces(places);
-        
-        if (formData.tempat && !places.includes(formData.tempat)) {
-          setFormData((prev) => ({ ...prev, tempat: '' }));
+        if (formData.tempat) {
+          const selectedTable = reservationTablesById[formData.tempat];
+          const invalidByAvailability = !selectedTable || !availableTableIds.includes(selectedTable.id);
+          const invalidByCapacity =
+            !selectedTable || jumlahOrangNum < selectedTable.minCapacity || jumlahOrangNum > selectedTable.maxCapacity;
+
+          if (invalidByAvailability || invalidByCapacity) {
+            setFormData((prev) => ({ ...prev, tempat: '' }));
+          }
         }
       } catch (err) {
         console.error('Failed to fetch availability', err);
@@ -452,31 +469,41 @@ export default function ReservasiPage() {
                 <label htmlFor="tempat" className="block text-sm font-medium text-neutral-900 mb-2">
                   Tempat <span className="text-red-500">*</span>
                 </label>
-                {loading ? (
+                {loading && (
                   <div className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-sm text-neutral-500">
                     Memuat ketersediaan tempat...
                   </div>
-                ) : availablePlaces.length === 0 && formData.tanggalReservasi && typeof formData.jumlahOrang === 'number' && formData.jumlahOrang > 0 ? (
-                  <div className="w-full px-4 py-3 border border-yellow-200 bg-yellow-50 rounded-lg text-sm text-yellow-700">
-                    Tidak ada tempat yang tersedia untuk tanggal dan jumlah orang ini.
-                  </div>
-                ) : (
-                  <select
-                    id="tempat"
-                    value={formData.tempat}
-                    onChange={(e) => handleInputChange('tempat', e.target.value)}
-                    required
-                    disabled={!formData.tanggalReservasi || typeof formData.jumlahOrang !== 'number' || formData.jumlahOrang <= 0 || availablePlaces.length === 0}
-                    className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm disabled:bg-neutral-50 disabled:text-neutral-400"
-                  >
-                    <option value="">Pilih tempat</option>
-                    {availablePlaces.map((place) => (
-                      <option key={place} value={place}>
-                        {place}
-                      </option>
-                    ))}
-                  </select>
                 )}
+
+                {!loading &&
+                  availablePlaces.length === 0 &&
+                  formData.tanggalReservasi &&
+                  typeof formData.jumlahOrang === 'number' &&
+                  formData.jumlahOrang > 0 && (
+                    <div className="w-full px-4 py-3 border border-yellow-200 bg-yellow-50 rounded-lg text-sm text-yellow-700">
+                      Tidak ada tempat yang tersedia untuk tanggal dan jumlah orang ini.
+                    </div>
+                  )}
+
+                <div className="mt-3">
+                  <ReservationPlaceLayout
+                    value={formData.tempat}
+                    onChange={(next) => handleInputChange('tempat', next)}
+                    jumlahOrang={formData.jumlahOrang}
+                    availableTableIds={availablePlaces}
+                    disabled={
+                      !formData.tanggalReservasi ||
+                      typeof formData.jumlahOrang !== 'number' ||
+                      formData.jumlahOrang <= 0 ||
+                      (availablePlaces.length === 0 &&
+                        formData.tanggalReservasi !== '' &&
+                        typeof formData.jumlahOrang === 'number' &&
+                        formData.jumlahOrang > 0)
+                    }
+                  />
+                </div>
+
+                <input id="tempat" name="tempat" type="hidden" value={formData.tempat} required />
               </div>
 
               <div className="pt-4">
@@ -719,7 +746,7 @@ export default function ReservasiPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-neutral-500">Tempat:</span>
-                    <span className="text-neutral-900 font-medium">{formData.tempat}</span>
+                    <span className="text-neutral-900 font-medium">{formatReservationPlaceLabel(formData.tempat)}</span>
                   </div>
                 </div>
               </div>
@@ -827,7 +854,7 @@ export default function ReservasiPage() {
                         body: JSON.stringify({
                           nama: formData.nama,
                           jumlahOrang: formData.jumlahOrang,
-                          tempat: formData.tempat,
+                          tempat: formatReservationPlaceLabel(formData.tempat),
                           tanggal: formData.tanggalReservasi,
                           jam: formData.jam,
                           menu: menuItems,
