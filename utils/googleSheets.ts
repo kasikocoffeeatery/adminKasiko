@@ -170,7 +170,7 @@ export async function fetchAvailabilityDataWithHash(
   const resolvedSheetId = typeof sheetId === 'number' ? sheetId : inferredGid ?? 0;
 
   const res = await fetchGoogleSheetCSVWithHash(spreadsheetUrl, resolvedSheetId, ifHash);
-  if ('notModified' in res) return res;
+  if ('notModified' in res) return { rows: null, hash: res.hash, notModified: true };
 
   const parsed = parseCSV(res.csvText);
   return { rows: parsed as AvailabilityRow[], hash: res.hash };
