@@ -1140,7 +1140,7 @@ export default function ReservasiPage() {
                 <h3 className="text-lg font-semibold text-neutral-900">Pembayaran</h3>
                 <div className="mt-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
                   <div className="flex items-start gap-3">
-                    <div className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold">
+                    <div className="mt-0.5 inline-flex h-6 w-6 p-2 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold">
                       ✓
                     </div>
                     <div className="space-y-1">
