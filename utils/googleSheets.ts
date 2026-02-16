@@ -15,7 +15,7 @@ export async function fetchGoogleSheetCSV(
   // Use API route as proxy to avoid CORS issues
   const apiUrl = `/api/sheets?url=${encodeURIComponent(spreadsheetUrl)}&gid=${sheetId}`;
   
-  const response = await fetch(apiUrl);
+  const response = await fetch(apiUrl, { cache: 'no-store' });
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
@@ -24,6 +24,33 @@ export async function fetchGoogleSheetCSV(
   
   const result = await response.json();
   return result.data;
+}
+
+export async function fetchGoogleSheetCSVWithHash(
+  spreadsheetUrl: string,
+  sheetId: number = 0,
+  ifHash?: string | null
+): Promise<{ csvText: string; hash: string } | { csvText: null; hash: string | null; notModified: true }> {
+  const qs = new URLSearchParams({
+    url: spreadsheetUrl,
+    gid: String(sheetId),
+  });
+  if (ifHash) qs.set('ifHash', ifHash);
+
+  const apiUrl = `/api/sheets?${qs.toString()}`;
+  const response = await fetch(apiUrl, { cache: 'no-store' });
+
+  if (response.status === 304) {
+    return { csvText: null, hash: ifHash ?? null, notModified: true };
+  }
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(errorData.error || `Failed to fetch spreadsheet: ${response.statusText}`);
+  }
+
+  const result = await response.json();
+  return { csvText: result.data, hash: result.hash };
 }
 
 /**
@@ -132,6 +159,21 @@ export async function fetchAvailabilityData(
   const parsed = parseCSV(csvText);
   
   return parsed as AvailabilityRow[];
+}
+
+export async function fetchAvailabilityDataWithHash(
+  spreadsheetUrl: string,
+  sheetId?: number,
+  ifHash?: string | null
+): Promise<{ rows: AvailabilityRow[]; hash: string } | { rows: null; hash: string | null; notModified: true }> {
+  const inferredGid = extractGidFromSheetUrl(spreadsheetUrl);
+  const resolvedSheetId = typeof sheetId === 'number' ? sheetId : inferredGid ?? 0;
+
+  const res = await fetchGoogleSheetCSVWithHash(spreadsheetUrl, resolvedSheetId, ifHash);
+  if ('notModified' in res) return res;
+
+  const parsed = parseCSV(res.csvText);
+  return { rows: parsed as AvailabilityRow[], hash: res.hash };
 }
 
 /**

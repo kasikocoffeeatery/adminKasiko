@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createHash } from 'crypto';
 
 /**
  * Convert Google Sheets API v4 response to CSV format
@@ -21,6 +22,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const spreadsheetUrl = searchParams.get('url');
     const sheetId = searchParams.get('gid') || '0';
+    const ifHash = searchParams.get('ifHash');
 
     if (!spreadsheetUrl) {
       return NextResponse.json(
@@ -51,14 +53,21 @@ export async function GET(request: NextRequest) {
         // For now, we'll try to get all sheets and use the first one if gid=0
         const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/A:Z?key=${apiKey}`;
 
-        const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl, { cache: 'no-store' });
 
         if (response.ok) {
           const data = await response.json();
           
           if (data.values && data.values.length > 0) {
             const csvText = convertToCSV(data.values);
-            return NextResponse.json({ data: csvText });
+            const hash = createHash('sha1').update(csvText).digest('hex');
+            if (ifHash && ifHash === hash) {
+              return new NextResponse(null, { status: 304, headers: { 'Cache-Control': 'no-store, max-age=0' } });
+            }
+            return NextResponse.json(
+              { data: csvText, hash },
+              { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+            );
           }
         }
       } catch (apiError) {
@@ -71,6 +80,7 @@ export async function GET(request: NextRequest) {
     const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export?format=csv&gid=${sheetId}`;
 
     const response = await fetch(csvUrl, {
+      cache: 'no-store',
       headers: {
         'User-Agent': 'Mozilla/5.0',
       },
@@ -85,7 +95,14 @@ export async function GET(request: NextRequest) {
 
     const csvText = await response.text();
 
-    return NextResponse.json({ data: csvText });
+    const hash = createHash('sha1').update(csvText).digest('hex');
+    if (ifHash && ifHash === hash) {
+      return new NextResponse(null, { status: 304, headers: { 'Cache-Control': 'no-store, max-age=0' } });
+    }
+    return NextResponse.json(
+      { data: csvText, hash },
+      { headers: { 'Cache-Control': 'no-store, max-age=0' } }
+    );
   } catch (error) {
     console.error('Error fetching spreadsheet:', error);
     return NextResponse.json(
