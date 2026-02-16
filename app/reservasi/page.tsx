@@ -834,6 +834,55 @@ export default function ReservasiPage() {
                 />
               </div>
 
+              {/* Metode Pembayaran (dipilih sebelum submit) */}
+              <div className="rounded-lg border border-neutral-200 bg-white p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-neutral-900">Metode Pembayaran</p>
+                    <p className="text-xs text-neutral-500 mt-0.5">Pilih tipe pembayaran sebelum kirim reservasi.</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-neutral-500">Nominal dibayar</p>
+                    <p className="text-sm font-semibold text-neutral-900">
+                      Rp {(paymentType === 'dp' ? Math.round(getGrandTotal() * 0.5) : getGrandTotal()).toLocaleString('id-ID')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentType('lunas')}
+                    className={`w-full text-left px-4 py-3 border rounded-lg transition-colors ${
+                      paymentType === 'lunas'
+                        ? 'border-brand-dark bg-neutral-50'
+                        : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-neutral-900">Lunas</span>
+                      <span className="text-sm font-semibold text-neutral-900">Rp {getGrandTotal().toLocaleString('id-ID')}</span>
+                    </div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentType('dp')}
+                    className={`w-full text-left px-4 py-3 border rounded-lg transition-colors ${
+                      paymentType === 'dp'
+                        ? 'border-brand-dark bg-neutral-50'
+                        : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-neutral-900">DP (50%)</span>
+                      <span className="text-sm font-semibold text-neutral-900">
+                        Rp {Math.round(getGrandTotal() * 0.5).toLocaleString('id-ID')}
+                      </span>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
               {/* Actions */}
               <div className="flex gap-4 pt-4">
                 <button
@@ -872,6 +921,7 @@ export default function ReservasiPage() {
                           idWa: idWa,
                           noWa: formData.noWa,
                           catatan: catatanReview,
+                          paymentType,
                         }),
                       });
 
@@ -881,6 +931,8 @@ export default function ReservasiPage() {
                         console.error('API Error:', errorData);
                         throw new Error(errorMessage);
                       }
+
+                      await response.json().catch(() => ({}));
 
                       // Show payment modal
                       setShowPaymentModal(true);
@@ -1182,40 +1234,19 @@ export default function ReservasiPage() {
             </div>
 
             <div className="space-y-4">
-              {/* Pilihan Pembayaran */}
-              <div>
-                <p className="text-sm font-medium text-neutral-900 mb-3">Pilih Tipe Pembayaran:</p>
-                <div className="space-y-2">
-                  <button
-                    onClick={() => setPaymentType('lunas')}
-                    className={`w-full text-left p-4 border rounded-lg transition-colors ${
-                      paymentType === 'lunas'
-                        ? 'border-brand-dark bg-neutral-50'
-                        : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-neutral-900">Lunas</span>
-                      <span className="text-sm font-semibold text-neutral-900">
-                        Rp {getGrandTotal().toLocaleString('id-ID')}
-                      </span>
-                    </div>
-                  </button>
-                  <button
-                    onClick={() => setPaymentType('dp')}
-                    className={`w-full text-left p-4 border rounded-lg transition-colors ${
-                      paymentType === 'dp'
-                        ? 'border-brand-dark bg-neutral-50'
-                        : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-neutral-900">DP (50%)</span>
-                      <span className="text-sm font-semibold text-neutral-900">
-                        Rp {Math.round(getGrandTotal() * 0.5).toLocaleString('id-ID')}
-                      </span>
-                    </div>
-                  </button>
+              {/* Ringkasan Pembayaran */}
+              <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-neutral-700">Tipe</span>
+                  <span className="text-sm font-semibold text-neutral-900">
+                    {paymentType === 'dp' ? 'DP (50%)' : 'Lunas'}
+                  </span>
+                </div>
+                <div className="mt-2 flex items-center justify-between">
+                  <span className="text-sm font-medium text-neutral-700">Nominal dibayar</span>
+                  <span className="text-sm font-semibold text-neutral-900">
+                    Rp {(paymentType === 'dp' ? Math.round(getGrandTotal() * 0.5) : getGrandTotal()).toLocaleString('id-ID')}
+                  </span>
                 </div>
               </div>
 

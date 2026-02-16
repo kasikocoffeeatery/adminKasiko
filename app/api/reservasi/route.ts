@@ -94,6 +94,8 @@ export async function POST(request: NextRequest) {
       catatan: body.catatan || '',
     };
 
+    const paymentType = body.paymentType === 'dp' ? 'dp' : 'lunas';
+
     console.log('Sending data to Google Apps Script:', {
       url: scriptUrl,
       payload: payload,
@@ -161,6 +163,7 @@ export async function POST(request: NextRequest) {
     const webhookPayload = {
       event: 'reservation_created',
       reservationKey,
+      paymentType,
       reservation: payload,
       appsScriptResult: result,
       createdAt: new Date().toISOString(),
@@ -174,7 +177,7 @@ export async function POST(request: NextRequest) {
       console.log('n8n webhook skipped (N8N_RESERVASI_WEBHOOK_URL not set)');
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json({ ...result, reservationKey });
   } catch (error: any) {
     console.error('Error submitting reservation:', error);
     return NextResponse.json(
