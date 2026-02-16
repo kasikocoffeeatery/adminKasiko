@@ -14,6 +14,72 @@ function getImagePath(name: string): string {
 // Contoh: "Caffee Latte" -> "/images/CAFFEE_LATTE.jpg"
 
 export const menuData: MenuItem[] = [
+  // Bundle
+  {
+    id: 'bd-1',
+    name: 'Ricebowl Chicken Popcorn Sambal Matah + Tea',
+    description: 'Rice bowl Chicken Popcorn Sambal Matah + Lychee Tea / Lemon Tea',
+    kategori: [
+      { jenis: 'Lychee Tea', harga: 43000 },
+      { jenis: 'Lemon Tea', harga: 43000 },
+    ],
+    category: 'bundle',
+  },
+  {
+    id: 'bd-2',
+    name: 'Ricebowl Chicken Popcorn Creamy Mushroom + Tea',
+    description: 'Rice bowl Chicken Popcorn Creamy Mushroom + Lychee Tea / Lemon Tea',
+    kategori: [
+      { jenis: 'Lychee Tea', harga: 43000 },
+      { jenis: 'Lemon Tea', harga: 43000 },
+    ],
+    category: 'bundle',
+  },
+  {
+    id: 'bd-3',
+    name: 'Ricebowl Chicken Popcorn BBQ Sauce + Tea',
+    description: 'Chicken Popcorn BBQ Sauce + Lychee Tea / Lemon Tea',
+    kategori: [
+      { jenis: 'Lychee Tea', harga: 43000 },
+      { jenis: 'Lemon Tea', harga: 43000 },
+    ],
+    category: 'bundle',
+  },
+  {
+    id: 'bd-4',
+    name: 'Ayam Bakar + Air Mineral',
+    description: 'Nasi Ayam Bakar Cabe Ijo + Air mineral',
+    kategori: [{ jenis: 'Paket', harga: 33000 }],
+    category: 'bundle',
+  },
+  {
+    id: 'bd-5',
+    name: 'Ayam Goreng + Air Mineral',
+    description: 'Nasi Ayam Goreng Serundeng Cabe Ijo + Air mineral',
+    kategori: [{ jenis: 'Paket', harga: 33000 }],
+    category: 'bundle',
+  },
+  {
+    id: 'bd-6',
+    name: 'Paket Nasi Liweut 6 Orang',
+    description: '',
+    kategori: [{ jenis: 'Paket', harga: 240000 }],
+    category: 'bundle',
+  },
+  {
+    id: 'bd-7',
+    name: 'Paket Nasi Liweut 8 Orang',
+    description: '',
+    kategori: [{ jenis: 'Paket', harga: 320000 }],
+    category: 'bundle',
+  },
+  {
+    id: 'bd-8',
+    name: 'Paket Nasi Liweut 10 Orang',
+    description: '',
+    kategori: [{ jenis: 'Paket', harga: 400000 }],
+    category: 'bundle',
+  },
 
   // Coffee Milk
   {

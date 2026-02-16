@@ -57,7 +57,7 @@ export default function MenuItem({ item }: MenuItemProps) {
       </div>
 
       {/* Desktop: Horizontal Layout (2 columns) */}
-      <div className="hidden md:flex flex-row h-full">
+      <div className="hidden md:flex flex-row h-full my-4">
         {/* Image */}
         <div className="w-60 h-60 shrink-0 overflow-hidden bg-neutral-100 relative">
           {item.image && !imgError ? (
@@ -86,9 +86,9 @@ export default function MenuItem({ item }: MenuItemProps) {
         </div>
 
         {/* Content */}
-        <div className="flex-1 p-5 md:p-6 flex flex-col justify-between">
+        <div className="flex-1 p-5 md:px-6 py-0 flex flex-col justify-between">
           <div>
-            <div className="flex items-start justify-between gap-3 mb-2">
+            <div className="flex items-start justify-between mb-2">
               <h3 className="text-lg md:text-xl font-semibold text-neutral-900 tracking-tight leading-tight">
                 {item.name}
               </h3>

@@ -1,6 +1,65 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { formatReservationPlaceLabel } from '@/data/reservationPlaces';
 
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function postWebhook(url: string, body: unknown) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 6000);
+
+  try {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+
+    // Optional auth for n8n webhook
+    // - If your n8n Webhook node uses "Basic Auth", set N8N_RESERVASI_WEBHOOK_BASIC_USER / _PASS
+    // - If it uses "Header Auth" / "JWT", set N8N_RESERVASI_WEBHOOK_AUTHORIZATION (e.g. "Bearer xxx")
+    // - Or custom header via N8N_RESERVASI_WEBHOOK_HEADER_NAME / _VALUE
+    const basicUser = process.env.N8N_RESERVASI_WEBHOOK_BASIC_USER;
+    const basicPass = process.env.N8N_RESERVASI_WEBHOOK_BASIC_PASS;
+    if (basicUser && basicPass) {
+      const token = Buffer.from(`${basicUser}:${basicPass}`, 'utf8').toString('base64');
+      headers.Authorization = `Basic ${token}`;
+    }
+
+    const authz = process.env.N8N_RESERVASI_WEBHOOK_AUTHORIZATION;
+    if (authz) headers.Authorization = authz;
+
+    const headerName = process.env.N8N_RESERVASI_WEBHOOK_HEADER_NAME;
+    const headerValue = process.env.N8N_RESERVASI_WEBHOOK_HEADER_VALUE;
+    if (headerName && headerValue) headers[headerName] = headerValue;
+
+    // Small retry for transient network issues
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(body),
+          signal: controller.signal,
+          cache: 'no-store',
+        });
+
+        if (res.ok) return;
+        // Retry only on upstream temporary errors
+        if (res.status === 429 || res.status === 500 || res.status === 502 || res.status === 503 || res.status === 504) {
+          await sleep(250 * Math.pow(2, attempt));
+          continue;
+        }
+
+        const txt = await res.text().catch(() => '');
+        throw new Error(`Webhook failed: ${res.status} ${res.statusText} ${txt.slice(0, 200)}`);
+      } catch (e) {
+        if (attempt === 1) throw e;
+        await sleep(250);
+      }
+    }
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 /**
  * API route to submit reservation data to Google Sheets via Google Apps Script
  * Note: Google Sheets API requires OAuth2/Service Account for write operations.
@@ -94,6 +153,27 @@ export async function POST(request: NextRequest) {
     }
     
     console.log('Google Apps Script result:', result);
+
+    // Trigger n8n webhook (best-effort; won't fail reservation if webhook is down)
+    const webhookUrl = process.env.N8N_RESERVASI_WEBHOOK_URL || '';
+
+    const reservationKey = [payload.tanggal, payload.jam, payload.tempat, payload.noWa].filter(Boolean).join('|');
+    const webhookPayload = {
+      event: 'reservation_created',
+      reservationKey,
+      reservation: payload,
+      appsScriptResult: result,
+      createdAt: new Date().toISOString(),
+    };
+
+    if (webhookUrl) {
+      postWebhook(webhookUrl, webhookPayload).catch((err) => {
+        console.warn('n8n webhook trigger failed:', err);
+      });
+    } else {
+      console.log('n8n webhook skipped (N8N_RESERVASI_WEBHOOK_URL not set)');
+    }
+
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('Error submitting reservation:', error);

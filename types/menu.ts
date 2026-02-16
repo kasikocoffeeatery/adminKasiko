@@ -1,6 +1,7 @@
 export type MenuCategory = 
   | 'all' 
   | 'best-seller'
+  | 'bundle'
   | 'coffee-milk' 
   | 'non-coffee' 
   | 'mocktail' 

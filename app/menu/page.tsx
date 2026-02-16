@@ -15,6 +15,7 @@ import siteContent from '@/data/siteContent.json';
 const categories = [
   { id: 'all' as MenuCategory, label: 'Semua Menu', icon: '' },
   { id: 'best-seller' as MenuCategory, label: 'Best Seller', icon: '' },
+  { id: 'bundle' as MenuCategory, label: 'Bundle', icon: '' },
   { id: 'coffee-milk' as MenuCategory, label: 'Coffee & Milk', icon: '' },
   { id: 'non-coffee' as MenuCategory, label: 'Non Coffee', icon: '' },
   { id: 'mocktail' as MenuCategory, label: 'Mocktail', icon: '' },

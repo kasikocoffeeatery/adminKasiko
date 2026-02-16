@@ -38,6 +38,7 @@ interface CartItem {
 const categories = [
   { id: 'all' as MenuCategory, label: 'Semua Menu', icon: '' },
   { id: 'best-seller' as MenuCategory, label: 'Best Seller', icon: '' },
+  { id: 'bundle' as MenuCategory, label: 'Bundle', icon: '' },
   { id: 'coffee-milk' as MenuCategory, label: 'Coffee & Milk', icon: '' },
   { id: 'non-coffee' as MenuCategory, label: 'Non Coffee', icon: '' },
   { id: 'mocktail' as MenuCategory, label: 'Mocktail', icon: '' },
@@ -225,7 +226,8 @@ export default function ReservasiPage() {
     setSelectedMenuItem(item);
     setModalCatatan('');
     setModalQuantity('');
-    setSelectedKategori(null);
+    // Auto-select if there's only 1 option, otherwise let user choose.
+    setSelectedKategori(item.kategori?.length === 1 ? item.kategori[0] : null);
     setShowKategoriModal(true);
   };
 
@@ -923,27 +925,31 @@ export default function ReservasiPage() {
             </div>
             <p className="text-sm text-neutral-500 mb-4">{selectedMenuItem.description}</p>
             <div className="space-y-4">
-              <div>
-                <p className="text-sm font-medium text-neutral-900 mb-3">Pilih Kategori:</p>
-                {selectedMenuItem.kategori.map((kat, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleSelectKategori(kat)}
-                    className={`w-full text-left p-4 border rounded-lg transition-colors mb-2 ${
-                      selectedKategori?.jenis === kat.jenis
-                        ? 'border-brand-dark bg-neutral-50'
-                        : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-neutral-900">{kat.jenis}</span>
-                      <span className="text-sm font-semibold text-neutral-900">
-                        Rp {kat.harga.toLocaleString('id-ID')}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+              {selectedMenuItem.kategori.length > 1 ? (
+                <div>
+                  <p className="text-sm font-medium text-neutral-900 mb-3">Pilih Kategori:</p>
+                  {selectedMenuItem.kategori.map((kat, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleSelectKategori(kat)}
+                      className={`w-full text-left p-4 border rounded-lg transition-colors mb-2 ${
+                        selectedKategori?.jenis === kat.jenis
+                          ? 'border-brand-dark bg-neutral-50'
+                          : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-neutral-900">{kat.jenis}</span>
+                        <span className="text-sm font-semibold text-neutral-900">
+                          Rp {kat.harga.toLocaleString('id-ID')}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div></div>
+              )}
               <div>
                 <label htmlFor="jumlah" className="block text-sm font-medium text-neutral-900 mb-2">
                   Jumlah <span className="text-red-500">*</span>
@@ -996,6 +1002,17 @@ export default function ReservasiPage() {
                   placeholder="Contoh: Kurang manis, tanpa es, dll"
                 />
               </div>
+              <div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3">
+                <span className="text-sm font-medium text-neutral-700">Total Harga</span>
+                <span className="text-sm font-semibold text-neutral-900">
+                  Rp{' '}
+                  {(
+                    (selectedKategori?.harga ?? selectedMenuItem.kategori[0]?.harga ?? 0) *
+                    (typeof modalQuantity === 'number' ? modalQuantity : 0)
+                  ).toLocaleString('id-ID')}
+                </span>
+              </div>
+
               <button
                 onClick={handleAddToCart}
                 disabled={!selectedKategori || modalQuantity === '' || (typeof modalQuantity === 'number' && modalQuantity < 1)}
@@ -1118,8 +1135,25 @@ export default function ReservasiPage() {
       {showPaymentModal && (
         <div className="fixed inset-0 bg-[rgba(41,4,4,0.55)] flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-neutral-900">Pembayaran</h3>
+            <div className="flex items-start justify-between mb-4 gap-4">
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-900">Pembayaran</h3>
+                <div className="mt-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold">
+                      ✓
+                    </div>
+                    <div className="space-y-1">
+                      <p className="font-semibold">Reservasi berhasil tercatat</p>
+                      <p className="text-emerald-800/90 leading-relaxed">
+                        Silakan pilih metode pembayaran di bawah, lalu <span className="font-semibold">konfirmasi ke admin.</span>{' '}<br />
+                        Jika <span className="font-semibold">dalam waktu 30 menit</span> belum melakukan pembayaran dan konfirmasi ke admin, <span className="font-semibold">reservasi akan dibatalkan otomatis.</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <button
                 onClick={() => {
                   setShowPaymentModal(false);
