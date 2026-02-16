@@ -40,7 +40,10 @@ export default function ReservationPlaceLayout(props: {
 
   const isTableAvailable = (tableId: string) => availableTableIds.includes(tableId);
 
-  const getDisabledReason = (table: ReservationTable): string | null => {
+  const E_GROUP = ['E1', 'E2', 'E3', 'E4'] as const;
+  type EGroupId = (typeof E_GROUP)[number];
+
+  const getBaseDisabledReason = (table: ReservationTable): string | null => {
     if (disabled) {
       if (hasPeople && availableTableIds.length === 0) {
         return 'Tidak ada tempat tersedia untuk tanggal & jumlah orang ini';
@@ -51,6 +54,26 @@ export default function ReservationPlaceLayout(props: {
     if (!hasPeople) return null; // allow browsing before input people
     if (peopleCount! < table.minCapacity) return `Minimal ${table.minCapacity} orang`;
     if (peopleCount! > table.maxCapacity) return `Maksimal ${table.maxCapacity} orang`;
+    return null;
+  };
+
+  const shouldForceDisableEGroup = (tableId: string): boolean => {
+    // Special rule (based on Google Sheets availability only):
+    // If 3 of E1–E4 are marked "Tidak tersedia" in sheet, force-disable the remaining one.
+    if (disabled) return false;
+    if (!E_GROUP.includes(tableId as EGroupId)) return false;
+
+    const otherIds = E_GROUP.filter((id) => id !== tableId);
+    const unavailableOtherCount = otherIds.reduce((acc, id) => acc + (!isTableAvailable(id) ? 1 : 0), 0);
+    return unavailableOtherCount === 3;
+  };
+
+  const getDisabledReason = (table: ReservationTable): string | null => {
+    const base = getBaseDisabledReason(table);
+    if (base !== null) return base;
+
+    if (shouldForceDisableEGroup(table.id)) return 'Tidak tersedia';
+
     return null;
   };
 
