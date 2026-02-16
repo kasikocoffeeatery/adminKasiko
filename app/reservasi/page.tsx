@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppFloatingButton from '@/components/WhatsAppFloatingButton';
-import { fetchAvailabilityDataWithHash, getAvailablePlaces } from '@/utils/googleSheets';
+import { fetchAvailabilityData, getAvailablePlaces } from '@/utils/googleSheets';
 import { menuData } from '@/data/menu';
 import { MenuItem, MenuCategory, PriceOption } from '@/types/menu';
 import CategoryFilter from '@/components/CategoryFilter';
@@ -70,9 +70,6 @@ export default function ReservasiPage() {
   const [availablePlaces, setAvailablePlaces] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
-  const [availabilityRefreshNonce, setAvailabilityRefreshNonce] = useState(0);
-  const lastAvailabilityRefreshAtRef = useRef<number>(0);
-  const lastAvailabilityHashRef = useRef<string | null>(null);
 
   // Menu selection state
   const [activeCategory, setActiveCategory] = useState<MenuCategory>('all');
@@ -138,35 +135,6 @@ export default function ReservasiPage() {
     localStorage.setItem('reservasi_step', currentStep.toString());
   }, [currentStep]);
 
-  // Auto-refresh availability (polling) when user already filled date & people.
-  // This allows sheet updates to reflect without a full page refresh.
-  useEffect(() => {
-    if (currentStep !== 1) return;
-
-    const jumlahOrangNum = typeof formData.jumlahOrang === 'number' ? formData.jumlahOrang : 0;
-    const canRefresh = !!formData.tanggalReservasi && jumlahOrangNum > 0 && formData.jumlahOrang !== '';
-    if (!canRefresh) return;
-
-    const intervalMs = 15_000;
-    const intervalId = window.setInterval(() => {
-      setAvailabilityRefreshNonce((n) => n + 1);
-    }, intervalMs);
-
-    const onFocus = () => setAvailabilityRefreshNonce((n) => n + 1);
-    const onVisibility = () => {
-      if (!document.hidden) setAvailabilityRefreshNonce((n) => n + 1);
-    };
-
-    window.addEventListener('focus', onFocus);
-    document.addEventListener('visibilitychange', onVisibility);
-
-    return () => {
-      window.clearInterval(intervalId);
-      window.removeEventListener('focus', onFocus);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-  }, [currentStep, formData.tanggalReservasi, formData.jumlahOrang]);
-
   // Fetch available places when date or number of people changes
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -178,35 +146,19 @@ export default function ReservasiPage() {
         return;
       }
 
-      const now = Date.now();
-      const isBackgroundRefresh =
-        availabilityRefreshNonce > 0 && now - lastAvailabilityRefreshAtRef.current < 60_000;
-
-      // Only show spinner for the initial fetch / when inputs change.
-      if (!isBackgroundRefresh) setLoading(true);
+      setLoading(true);
       setError('');
 
       const spreadsheetUrl = process.env.NEXT_PUBLIC_GOOGLE_SHEETS_URL || '';
       
       if (!spreadsheetUrl) {
         setError('URL spreadsheet belum dikonfigurasi. Silakan hubungi administrator.');
-        if (!isBackgroundRefresh) setLoading(false);
+        setLoading(false);
         return;
       }
 
       try {
-        const availabilityRes = await fetchAvailabilityDataWithHash(
-          spreadsheetUrl,
-          undefined,
-          lastAvailabilityHashRef.current
-        );
-        if ('notModified' in availabilityRes) {
-          lastAvailabilityRefreshAtRef.current = Date.now();
-          return;
-        }
-
-        lastAvailabilityHashRef.current = availabilityRes.hash;
-        const availabilityData = availabilityRes.rows;
+        const availabilityData = await fetchAvailabilityData(spreadsheetUrl);
         const places = getAvailablePlaces(
           availabilityData,
           formData.tanggalReservasi,
@@ -221,14 +173,7 @@ export default function ReservasiPage() {
           ? Object.keys(reservationTablesById).filter((id) => places.includes(reservationTablesById[id].areaKey))
           : places;
 
-        // Only update state if the computed availability actually changed.
-        setAvailablePlaces((prev) => {
-          if (prev.length === availableTableIds.length && prev.every((id) => availableTableIds.includes(id))) {
-            return prev;
-          }
-          return availableTableIds;
-        });
-        lastAvailabilityRefreshAtRef.current = Date.now();
+        setAvailablePlaces(availableTableIds);
         
         if (formData.tempat) {
           const selectedTable = reservationTablesById[formData.tempat];
@@ -242,18 +187,25 @@ export default function ReservasiPage() {
         }
       } catch (err) {
         console.error('Failed to fetch availability', err);
-        // For background refresh, don't spam errors; keep the last known state.
-        if (!isBackgroundRefresh) setError('Gagal memuat data ketersediaan tempat. Silakan coba lagi.');
+        setError('Gagal memuat data ketersediaan tempat. Silakan coba lagi.');
       } finally {
-        if (!isBackgroundRefresh) setLoading(false);
+        setLoading(false);
       }
     };
 
     fetchPlaces();
-  }, [formData.tanggalReservasi, formData.jumlahOrang, availabilityRefreshNonce]);
+  }, [formData.tanggalReservasi, formData.jumlahOrang]);
 
   const handleInputChange = (field: keyof ReservationForm, value: string | number) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    // If date / people changes, reset selected table immediately to avoid stale selection.
+    if (field === 'tanggalReservasi' || field === 'jumlahOrang') {
+      setAvailablePlaces([]);
+    }
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+      ...(field === 'tanggalReservasi' || field === 'jumlahOrang' ? { tempat: '' } : {}),
+    }));
   };
 
   const handleNextStep = () => {

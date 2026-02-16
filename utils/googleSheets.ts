@@ -290,27 +290,47 @@ function normalizeDate(dateStr: string): string {
   if (iso) return iso[0];
 
   // Common formats from Sheets / locale:
-  // - DD/MM/YYYY or D/M/YYYY
-  // - DD-MM-YYYY or D-M-YYYY
-  const dmy = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
-  if (dmy) {
-    const day = dmy[1].padStart(2, '0');
-    const month = dmy[2].padStart(2, '0');
-    const year = dmy[3];
-    return `${year}-${month}-${day}`;
-  }
+  // - DD/MM/YYYY or D/M/YYYY (common in ID)
+  // - MM/DD/YYYY (common in US)
+  // - also supports "-" separator
+  const slash = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if (slash) {
+    const a = Number(slash[1]); // could be day or month
+    const b = Number(slash[2]); // could be month or day
+    const year = slash[3];
 
-  // US-ish: MM/DD/YYYY
-  const mdy = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
-  if (mdy) {
-    // If ambiguous (<=12 both), prefer DD/MM (Indo common) already handled above.
-    // This block is mainly for inputs like "2/15/2026" (month/day/year).
-    const monthNum = Number(mdy[1]);
-    const dayNum = Number(mdy[2]);
-    if (monthNum >= 1 && monthNum <= 12 && dayNum >= 13 && dayNum <= 31) {
-      const month = String(monthNum).padStart(2, '0');
+    const aIsMonth = a >= 1 && a <= 12;
+    const bIsMonth = b >= 1 && b <= 12;
+    const aIsDay = a >= 1 && a <= 31;
+    const bIsDay = b >= 1 && b <= 31;
+
+    // Decide DMY vs MDY:
+    // - If one side can't be a month, the other must be month.
+    // - If ambiguous (both <=12), prefer DMY (Indo default).
+    let dayNum: number;
+    let monthNum: number;
+
+    if (aIsDay && !aIsMonth && bIsMonth) {
+      // 16/2/2026 => DMY
+      dayNum = a;
+      monthNum = b;
+    } else if (aIsMonth && bIsDay && !bIsMonth) {
+      // 2/16/2026 => MDY
+      monthNum = a;
+      dayNum = b;
+    } else if (aIsMonth && bIsMonth) {
+      // 2/3/2026 => ambiguous, assume DMY
+      dayNum = a;
+      monthNum = b;
+    } else {
+      // Fallback, still try DMY shape
+      dayNum = a;
+      monthNum = b;
+    }
+
+    if (dayNum >= 1 && dayNum <= 31 && monthNum >= 1 && monthNum <= 12) {
       const day = String(dayNum).padStart(2, '0');
-      const year = mdy[3];
+      const month = String(monthNum).padStart(2, '0');
       return `${year}-${month}-${day}`;
     }
   }
