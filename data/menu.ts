@@ -792,8 +792,17 @@ export const menuData: MenuItem[] = [
     kategori: [{ jenis: 'Normal', harga: 20000 }],
     category: 'sweet-treats',
     image: getImagePath('sweet/Mantao Goreng Aren'),
-  }
-  
+  },
+
+  // Others
+  {
+    id: 'ot-1',
+    name: 'Air Mineral',
+    description: '',
+    kategori: [{ jenis: 'Normal', harga: 5000 }],
+    category: 'others',
+    image: getImagePath('others/air'),
+  },
 
   
 

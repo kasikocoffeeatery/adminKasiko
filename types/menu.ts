@@ -18,7 +18,8 @@ export type MenuCategory =
   | 'cake-cookies' 
   | 'snack' 
   | 'spaghetti' 
-  | 'sweet-treats';
+  | 'sweet-treats'
+  | 'others';
 
 export interface PriceOption {
   jenis: string;

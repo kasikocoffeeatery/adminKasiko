@@ -31,6 +31,7 @@ const categories = [
   { id: 'snack' as MenuCategory, label: 'Snack', icon: '' },
   { id: 'spaghetti' as MenuCategory, label: 'Spaghetti', icon: '' },
   { id: 'sweet-treats' as MenuCategory, label: 'Sweet Treats', icon: '' },
+  { id: 'others' as MenuCategory, label: 'Others', icon: '' },
 ];
 
 export default function MenuPage() {
