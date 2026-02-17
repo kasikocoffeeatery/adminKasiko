@@ -79,8 +79,8 @@ export const reservationZones: ReservationZone[] = [
     id: 'atas-2',
     label: 'Atas 2',
     tables: [
-      { id: 'G1', label: 'G1', areaKey: 'Outdoor', minCapacity: 4, maxCapacity: 8, size: 'lg' },
-      { id: 'G2', label: 'G2', areaKey: 'Outdoor', minCapacity: 25, maxCapacity: 30, size: 'full' },
+      { id: 'G1', label: 'G1', areaKey: 'Outdoor', minCapacity: 0, maxCapacity: 0, size: 'lg' },
+      { id: 'G2', label: 'G2', areaKey: 'Outdoor', minCapacity: 0, maxCapacity: 0, size: 'full' },
     ],
   },
 ];
