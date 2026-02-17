@@ -33,5 +33,6 @@ export interface MenuItem {
   category: MenuCategory;
   image?: string;
   isPopular?: boolean;
+  isRamadhan?: boolean;
 }
 

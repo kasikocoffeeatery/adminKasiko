@@ -8,6 +8,44 @@ interface MenuItemProps {
   item: MenuItemType;
 }
 
+function RamadhanBadge(props: { className?: string }) {
+  return (
+    <div
+      className={[
+        'inline-flex items-center gap-1.5 rounded-full border border-amber-200/70',
+        'bg-linear-to-r from-emerald-700 via-emerald-600 to-teal-600',
+        'px-2.5 py-1 shadow-[0_10px_25px_rgba(15,23,42,0.28)] backdrop-blur-sm',
+        props.className || '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {/* Crescent icon */}
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden="true"
+        className="h-3 w-3 text-amber-200"
+      >
+        <path
+          d="M16.9 20.2c-5.1 0-9.2-4.1-9.2-9.2 0-3.4 1.8-6.3 4.6-7.9-0.5-0.1-1-0.2-1.6-0.2-5.1 0-9.2 4.1-9.2 9.2S5.6 21.3 10.7 21.3c2.7 0 5.1-1.1 6.9-2.9-0.5 0.2-1.1 0.3-1.7 0.3z"
+          fill="currentColor"
+        />
+        <path
+          d="M19.2 6.3l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6.6-1.6z"
+          fill="currentColor"
+          opacity="0.9"
+        />
+      </svg>
+      <span className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-amber-50">
+        Spesial Ramadhan
+      </span>
+    </div>
+  );
+}
+
 export default function MenuItem({ item }: MenuItemProps) {
   const [imgError, setImgError] = useState(false);
 
@@ -38,6 +76,11 @@ export default function MenuItem({ item }: MenuItemProps) {
               <span className="text-[9px] font-semibold text-neutral-800 uppercase tracking-[0.18em]">
                 Best Seller
               </span>
+            </div>
+          )}
+          {item.isRamadhan && (
+            <div className="absolute top-2 left-2">
+              <RamadhanBadge />
             </div>
           )}
         </div>
@@ -81,6 +124,11 @@ export default function MenuItem({ item }: MenuItemProps) {
               <span className="text-[10px] font-semibold text-neutral-800 uppercase tracking-[0.18em]">
                 Best Seller
               </span>
+            </div>
+          )}
+          {item.isRamadhan && (
+            <div className="absolute top-3 left-3">
+              <RamadhanBadge className="px-3 py-1.5" />
             </div>
           )}
         </div>
