@@ -978,27 +978,27 @@ export default function ReservasiPage() {
             <p className="text-sm text-neutral-500 mb-4">{selectedMenuItem.description}</p>
             <div className="space-y-4">
               {selectedMenuItem.kategori.length > 1 ? (
-                <div>
-                  <p className="text-sm font-medium text-neutral-900 mb-3">Pilih Kategori:</p>
-                  {selectedMenuItem.kategori.map((kat, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleSelectKategori(kat)}
-                      className={`w-full text-left p-4 border rounded-lg transition-colors mb-2 ${
-                        selectedKategori?.jenis === kat.jenis
-                          ? 'border-brand-dark bg-neutral-50'
-                          : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-neutral-900">{kat.jenis}</span>
-                        <span className="text-sm font-semibold text-neutral-900">
-                          Rp {kat.harga.toLocaleString('id-ID')}
-                        </span>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+              <div>
+                <p className="text-sm font-medium text-neutral-900 mb-3">Pilih Kategori:</p>
+                {selectedMenuItem.kategori.map((kat, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSelectKategori(kat)}
+                    className={`w-full text-left p-4 border rounded-lg transition-colors mb-2 ${
+                      selectedKategori?.jenis === kat.jenis
+                        ? 'border-brand-dark bg-neutral-50'
+                        : 'border-neutral-200 hover:border-brand-dark hover:bg-neutral-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-neutral-900">{kat.jenis}</span>
+                      <span className="text-sm font-semibold text-neutral-900">
+                        Rp {kat.harga.toLocaleString('id-ID')}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
               ) : (
                 <div></div>
               )}
@@ -1189,7 +1189,7 @@ export default function ReservasiPage() {
           <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-start justify-between mb-4 gap-4">
               <div>
-                <h3 className="text-lg font-semibold text-neutral-900">Pembayaran</h3>
+              <h3 className="text-lg font-semibold text-neutral-900">Pembayaran</h3>
                 <div className="mt-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
                   <div className="flex items-start gap-3">
                     <div className="mt-0.5 inline-flex h-6 w-6 p-2 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-bold">
@@ -1236,31 +1236,61 @@ export default function ReservasiPage() {
             <div className="space-y-4">
               {/* Ringkasan Pembayaran */}
               <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4">
-                <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-neutral-700">Tipe</span>
-                  <span className="text-sm font-semibold text-neutral-900">
+                      <span className="text-sm font-semibold text-neutral-900">
                     {paymentType === 'dp' ? 'DP (50%)' : 'Lunas'}
-                  </span>
-                </div>
+                      </span>
+                    </div>
                 <div className="mt-2 flex items-center justify-between">
                   <span className="text-sm font-medium text-neutral-700">Nominal dibayar</span>
-                  <span className="text-sm font-semibold text-neutral-900">
+                      <span className="text-sm font-semibold text-neutral-900">
                     Rp {(paymentType === 'dp' ? Math.round(getGrandTotal() * 0.5) : getGrandTotal()).toLocaleString('id-ID')}
-                  </span>
+                      </span>
                 </div>
               </div>
 
               {/* QRIS Image */}
               <div className="pt-4 border-t border-neutral-200">
                 <div className="flex justify-center mb-4">
-                  <div className="w-64 h-64 relative bg-neutral-100 rounded-lg overflow-hidden">
-                    <Image
-                      src="/QR.png"
-                      alt="QRIS Payment"
-                      fill
-                      className="object-contain p-4"
-                      sizes="256px"
-                    />
+                  <div className="w-full max-w-full rounded-xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
+                    
+                    <div className="px-24 py-0 my-0">
+                      <div className="w-full h-20 relative rounded-lg overflow-hidden">
+                        <Image
+                          src="/images/logoqris.png"
+                          alt="Logo QRIS"
+                          fill
+                          className="object-contain p-0"
+                          sizes="288px"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="px-4 pt-0 text-center">
+                      <div className="text-[13px] font-extrabold tracking-[0.22em] text-neutral-900">
+                        KASIKO RESERVASI, RNGKSBTN
+                      </div>
+                      <div className="mt-1 text-[12px] tracking-[0.18em] text-neutral-700">
+                        NMID: ID1026484387844
+                      </div>
+                      <div className="mt-2 text-[12px] font-semibold tracking-[0.28em] text-neutral-900">
+                        A01
+                      </div>
+                    </div>
+                 
+
+                    <div className="px-12 pb-4 pt-0">
+                      <div className="aspect-square w-full relative bg-neutral-50 rounded-lg overflow-hidden">
+                        <Image
+                          src="/images/qris.png"
+                          alt="QRIS Payment"
+                          fill
+                          className="object-contain p-0"
+                          sizes="288px"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

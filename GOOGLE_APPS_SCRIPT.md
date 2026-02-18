@@ -106,7 +106,9 @@ function testDoPost() {
 5. Deploy script sebagai Web App:
    - Klik **Deploy** → **New deployment**
    - Pilih **Web app** sebagai type
-   - Set **Execute as**: Me
+   - **⚠️ PENTING**: Set **Execute as**: **Me** (bukan "User accessing the web app")
+     - Ini memungkinkan script write ke sheet yang di-restrict/private
+     - Script akan dijalankan sebagai **pemilik script** (Anda), bukan sebagai user yang akses web app
    - Set **Who has access**: Anyone (atau Anyone with Google account)
    - Klik **Deploy**
    - **Copy Web App URL** yang muncul (contoh: `https://script.google.com/macros/s/.../exec`)
@@ -120,4 +122,27 @@ function testDoPost() {
 ## Catatan:
 - Script ini menulis ke sheet aktif (active sheet)
 - Pastikan kolom sesuai urutan: timestamp, nama, jumlah orang, tempat, tanggal, jam, menu, total harga, id wa, no wa, pembayaran, catatan
+
+## 🔒 Sheet Restricted/Private - Apakah Bisa?
+
+**✅ BISA!** Asalkan:
+
+1. **Apps Script di-deploy dengan "Execute as: Me"** (sudah dijelaskan di step 5)
+   - Script akan dijalankan sebagai **pemilik script** (Anda)
+   - Jadi meskipun sheet di-restrict ke user tertentu atau fully private, script tetap bisa write
+
+2. **Script harus punya akses ke sheet:**
+   - Jika script dibuat di dalam spreadsheet (Extensions → Apps Script), otomatis punya akses
+   - Jika script standalone, pastikan sheet di-share ke email yang punya script dengan permission **Editor**
+
+3. **Sheet bisa di-restrict tanpa masalah:**
+   - ✅ Sheet bisa di-set ke "Restricted" (hanya user tertentu yang bisa akses)
+   - ✅ Sheet bisa fully private (hanya owner)
+   - ✅ Web app URL tetap bisa diakses publik untuk POST request
+   - ✅ Data tetap bisa di-write ke sheet via Apps Script
+
+**Catatan Keamanan:**
+- Web App URL bisa diakses siapa saja (jika set "Anyone")
+- Tapi mereka **hanya bisa POST data** ke script, tidak bisa akses sheet langsung
+- Untuk keamanan ekstra, bisa set "Who has access" ke "Anyone with Google account" atau buat autentikasi di Apps Script
 
