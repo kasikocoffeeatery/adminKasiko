@@ -48,8 +48,7 @@ export const reservationZones: ReservationZone[] = [
     tables: [
       { id: 'E1', label: 'E1', areaKey: 'Semi Outdoor', minCapacity: 4, maxCapacity: 4, size: 'sm' },
       { id: 'E2', label: 'E2', areaKey: 'Semi Outdoor', minCapacity: 4, maxCapacity: 4, size: 'sm' },
-      { id: 'E3', label: 'E3', areaKey: 'Semi Outdoor', minCapacity: 4, maxCapacity: 4, size: 'sm' },
-      { id: 'E4', label: 'E4', areaKey: 'Semi Outdoor', minCapacity: 5, maxCapacity: 8, size: 'md' },
+      { id: 'E3', label: 'E3', areaKey: 'Semi Outdoor', minCapacity: 5, maxCapacity: 8, size: 'md' },
     ],
   },
   {
@@ -79,8 +78,12 @@ export const reservationZones: ReservationZone[] = [
     id: 'atas-2',
     label: 'Atas 2',
     tables: [
+      // { id: 'G1', label: 'G1', areaKey: 'Outdoor', minCapacity: 4, maxCapacity: 8, size: 'lg' },
+      // { id: 'G2', label: 'G2', areaKey: 'Outdoor', minCapacity: 4, maxCapacity: 6, size: 'md' },
+      // { id: 'G3', label: 'G3', areaKey: 'Outdoor', minCapacity: 25, maxCapacity: 30, size: 'full' },
       { id: 'G1', label: 'G1', areaKey: 'Outdoor', minCapacity: 0, maxCapacity: 0, size: 'lg' },
-      { id: 'G2', label: 'G2', areaKey: 'Outdoor', minCapacity: 0, maxCapacity: 0, size: 'full' },
+      { id: 'G2', label: 'G2', areaKey: 'Outdoor', minCapacity: 0, maxCapacity: 0, size: 'md' },
+      { id: 'G3', label: 'G3', areaKey: 'Outdoor', minCapacity: 0, maxCapacity: 0, size: 'full' },
     ],
   },
 ];
