@@ -86,6 +86,7 @@ export default function ReservasiPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentType, setPaymentType] = useState<'lunas' | 'dp'>('lunas');
   const [submitting, setSubmitting] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   // Load form data and cart from localStorage on mount
   useEffect(() => {
@@ -202,6 +203,15 @@ export default function ReservasiPage() {
     if (field === 'tanggalReservasi' || field === 'jumlahOrang') {
       setAvailablePlaces([]);
     }
+    
+    // Ensure jam 19 only allows minute 00
+    if (field === 'jam' && typeof value === 'string' && value.includes(':')) {
+      const [hour, minute] = value.split(':');
+      if (hour === '19' && minute !== '00') {
+        value = '19:00';
+      }
+    }
+    
     setFormData((prev) => ({
       ...prev,
       [field]: value,
@@ -461,18 +471,94 @@ export default function ReservasiPage() {
                 />
               </div>
 
-              <div>
+              <div className="relative">
                 <label htmlFor="jam" className="block text-sm font-medium text-neutral-900 mb-2">
                   Jam Reservasi <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="time"
-                  id="jam"
-                  value={formData.jam}
-                  onChange={(e) => handleInputChange('jam', e.target.value)}
-                  required
-                  className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm"
-                />
+                <div className="relative">
+                  
+                  <input
+                    type="text"
+                    id="jam"
+                    readOnly
+                    value={formData.jam || '--:--'}
+                    onClick={() => setShowTimePicker(!showTimePicker)}
+                    required
+                    className="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm cursor-pointer"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <svg className="w-5 h-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  {showTimePicker && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-10" 
+                        onClick={() => setShowTimePicker(false)}
+                      />
+                      <div className="absolute top-full left-0 mt-1 bg-white border border-neutral-200 rounded-lg shadow-lg z-20 p-4">
+                        <div className="flex gap-4">
+                          <div className="flex flex-col items-center">
+                            <div className="text-xs text-neutral-500 mb-2 font-medium">Jam</div>
+                            <div className="overflow-y-auto max-h-48 scrollbar-thin scrollbar-thumb-neutral-300 scrollbar-track-neutral-100">
+                              {[17, 18, 19].map((hour) => {
+                                const hourStr = hour.toString().padStart(2, '0');
+                                const isSelected = formData.jam && formData.jam.includes(':') ? formData.jam.split(':')[0] === hourStr : false;
+                                return (
+                                  <div
+                                    key={hour}
+                                    onClick={() => {
+                                      // Jika jam 19 dipilih, otomatis set menit ke 00
+                                      const minute = hour === 19 ? '00' : (formData.jam && formData.jam.includes(':') ? formData.jam.split(':')[1] || '00' : '00');
+                                      handleInputChange('jam', `${hourStr}:${minute}`);
+                                    }}
+                                    className={`px-4 py-2 text-sm cursor-pointer rounded ${
+                                      isSelected ? 'bg-brand text-white hover:bg-brand/90' : 'text-neutral-900 hover:bg-neutral-100'
+                                    }`}
+                                  >
+                                    {hourStr}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-center">
+                            <div className="text-xs text-neutral-500 mb-2 font-medium">Menit</div>
+                            <div className="overflow-y-auto max-h-48 scrollbar-thin scrollbar-thumb-neutral-300 scrollbar-track-neutral-100">
+                              {Array.from({ length: 60 }, (_, i) => {
+                                const minute = i.toString().padStart(2, '0');
+                                const currentHour = formData.jam && formData.jam.includes(':') ? formData.jam.split(':')[0] : '';
+                                const isSelected = formData.jam && formData.jam.includes(':') ? formData.jam.split(':')[1] === minute : false;
+                                const isDisabled = currentHour === '19' && minute !== '00';
+                                
+                                return (
+                                  <div
+                                    key={minute}
+                                    onClick={() => {
+                                      if (isDisabled) return;
+                                      const hour = formData.jam && formData.jam.includes(':') ? formData.jam.split(':')[0] : '17';
+                                      handleInputChange('jam', `${hour}:${minute}`);
+                                    }}
+                                    className={`px-4 py-2 text-sm rounded ${
+                                      isDisabled 
+                                        ? 'text-neutral-300 cursor-not-allowed' 
+                                        : `cursor-pointer rounded ${
+                                            isSelected ? 'bg-brand text-white hover:bg-brand/90' : 'text-neutral-900 hover:bg-neutral-100'
+                                          }`
+                                    }`}
+                                  >
+                                    {minute}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
 
               <div>
