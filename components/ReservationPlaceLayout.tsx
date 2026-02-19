@@ -117,7 +117,7 @@ export default function ReservationPlaceLayout(props: {
             <div className="text-xs font-semibold text-neutral-800 mb-2">Peta tempat duduk</div>
             <div className="relative w-1/2 mx-auto overflow-hidden rounded-lg bg-neutral-50 border border-neutral-200">
               <Image
-                src="/images/denah.png"
+                src="/images/denahupd.png"
                 alt="Denah tempat duduk"
                 width={1400}
                 height={900}
