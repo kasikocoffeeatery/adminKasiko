@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppFloatingButton from '@/components/WhatsAppFloatingButton';
@@ -87,6 +87,7 @@ export default function ReservasiPage() {
   const [paymentType, setPaymentType] = useState<'lunas' | 'dp'>('lunas');
   const [submitting, setSubmitting] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const isNavigatingFromHistory = useRef(false);
 
   // Load form data and cart from localStorage on mount
   useEffect(() => {
@@ -136,6 +137,76 @@ export default function ReservasiPage() {
   useEffect(() => {
     localStorage.setItem('reservasi_step', currentStep.toString());
   }, [currentStep]);
+
+  // Sync step with browser history - update URL when step changes
+  useEffect(() => {
+    if (isNavigatingFromHistory.current) {
+      isNavigatingFromHistory.current = false;
+      return;
+    }
+
+    const hash = `#step${currentStep}`;
+    if (window.location.hash !== hash) {
+      window.history.pushState({ step: currentStep }, '', hash);
+    }
+  }, [currentStep]);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    // Check initial hash on mount
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      const stepMatch = hash.match(/^#step([123])$/);
+      if (stepMatch) {
+        const step = parseInt(stepMatch[1]) as 1 | 2 | 3;
+        if (step !== currentStep) {
+          isNavigatingFromHistory.current = true;
+          setCurrentStep(step);
+        }
+      } else if (!hash && currentStep !== 1) {
+        // If no hash and not on step 1, set to step 1
+        isNavigatingFromHistory.current = true;
+        setCurrentStep(1);
+      }
+    };
+
+    // Handle popstate (browser back/forward)
+    const handlePopState = (e: PopStateEvent) => {
+      isNavigatingFromHistory.current = true;
+      if (e.state && e.state.step) {
+        setCurrentStep(e.state.step);
+      } else {
+        // Parse from hash if state doesn't have step
+        const hash = window.location.hash;
+        const stepMatch = hash.match(/^#step([123])$/);
+        if (stepMatch) {
+          const step = parseInt(stepMatch[1]) as 1 | 2 | 3;
+          setCurrentStep(step);
+        } else if (!hash) {
+          setCurrentStep(1);
+        }
+      }
+    };
+
+    // Initial check on mount
+    if (window.location.hash) {
+      handleHashChange();
+    } else if (currentStep !== 1) {
+      // If no hash but not on step 1, update URL
+      window.history.replaceState({ step: currentStep }, '', `#step${currentStep}`);
+    }
+
+    // Listen to hash changes (when user manually changes URL)
+    window.addEventListener('hashchange', handleHashChange);
+    // Listen to popstate (browser back/forward)
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handlePopState);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
 
   // Fetch available places when date or number of people changes
   useEffect(() => {
@@ -228,6 +299,14 @@ export default function ReservasiPage() {
         return;
       }
       setError('');
+      setCurrentStep(2);
+    }
+  };
+
+  const handleBackStep = () => {
+    if (currentStep === 2) {
+      setCurrentStep(1);
+    } else if (currentStep === 3) {
       setCurrentStep(2);
     }
   };
@@ -620,6 +699,17 @@ export default function ReservasiPage() {
         <>
           <section className="bg-white border-b border-neutral-200/70">
             <div className="max-w-6xl mx-auto px-4 lg:px-0 py-10 md:py-14">
+              <div className="mb-6">
+                <button
+                  onClick={handleBackStep}
+                  className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors text-sm font-medium mb-4"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Kembali ke Form Reservasi
+                </button>
+              </div>
               <p className="text-[11px] font-medium tracking-[0.28em] uppercase text-neutral-500 text-center mb-3">
                 Pilih Menu
               </p>
@@ -785,6 +875,17 @@ export default function ReservasiPage() {
         <>
           <section className="bg-white border-b border-neutral-200/70">
             <div className="max-w-3xl mx-auto px-4 lg:px-0 py-10 md:py-14">
+              <div className="mb-6">
+                <button
+                  onClick={handleBackStep}
+                  className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors text-sm font-medium mb-4"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  Kembali ke Pilih Menu
+                </button>
+              </div>
               <p className="text-[11px] font-medium tracking-[0.28em] uppercase text-neutral-500 text-center mb-3">
                 Review & Submit
               </p>
@@ -972,7 +1073,7 @@ export default function ReservasiPage() {
               {/* Actions */}
               <div className="flex gap-4 pt-4">
                 <button
-                  onClick={() => setCurrentStep(2)}
+                  onClick={handleBackStep}
                   className="flex-1 bg-neutral-100 text-neutral-900 px-6 py-3 rounded-lg font-medium hover:bg-neutral-200 transition-colors text-sm"
                 >
                   Kembali
