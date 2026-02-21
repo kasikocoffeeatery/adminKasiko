@@ -505,14 +505,14 @@ export const menuData: MenuItem[] = [
     category: 'ricebowl',
     image: getImagePath('ricebowl/Chicken Popcorn Creamy Mushroom'),
   },
-  { 
-    id: 'rb-4',
-    name: 'Chicken Popcorn Korean Sauce',
-    description: 'Perpaduan Nasi dengan Ayam Dibalut Dengan Saus Korean',
-    kategori: [{ jenis: 'Normal', harga: 29000 }],
-    category: 'ricebowl',
-    image: getImagePath('ricebowl/Chicken Popcorn Korean Sauce'),
-  },
+  // { 
+  //   id: 'rb-4',
+  //   name: 'Chicken Popcorn Korean Sauce',
+  //   description: 'Perpaduan Nasi dengan Ayam Dibalut Dengan Saus Korean',
+  //   kategori: [{ jenis: 'Normal', harga: 29000 }],
+  //   category: 'ricebowl',
+  //   image: getImagePath('ricebowl/Chicken Popcorn Korean Sauce'),
+  // },
   { 
     id: 'rb-5',
     name: 'Chicken Popcorn Matah Sauce',
