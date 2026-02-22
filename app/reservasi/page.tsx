@@ -87,6 +87,8 @@ export default function ReservasiPage() {
   const [paymentType, setPaymentType] = useState<'lunas' | 'dp'>('lunas');
   const [submitting, setSubmitting] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [showTimeRestrictionModal, setShowTimeRestrictionModal] = useState(false);
+  const [isRestrictedTime, setIsRestrictedTime] = useState(false);
   const isNavigatingFromHistory = useRef(false);
 
   // Load form data and cart from localStorage on mount
@@ -208,6 +210,92 @@ export default function ReservasiPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount
 
+  // Function to get current WIB time
+  const getCurrentWIBTime = () => {
+    const now = new Date();
+    // Get WIB time string and parse it
+    const wibTimeString = now.toLocaleString('en-US', { 
+      timeZone: 'Asia/Jakarta',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    // Parse the string to get hours and minutes
+    const [datePart, timePart] = wibTimeString.split(', ');
+    const [time, period] = timePart.split(' ');
+    const [hours, minutes] = time.split(':').map(Number);
+    // Create a date object with WIB time (for comparison purposes)
+    const wibDate = new Date();
+    wibDate.setHours(hours, minutes, 0, 0);
+    return wibDate;
+  };
+
+  // Function to check if current time is in restricted period for same-day reservations
+  // Only restricts if reservation date = today and current time >= 16:30 WIB
+  const checkRestrictedTime = (reservationDate?: string) => {
+    // If no reservation date provided, not restricted (should always pass date explicitly)
+    if (!reservationDate) return false;
+    
+    const selectedDate = reservationDate;
+    
+    // Get current date in WIB timezone
+    const now = new Date();
+    const wibDateString = now.toLocaleString('en-US', { 
+      timeZone: 'Asia/Jakarta',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    
+    // Format: MM/DD/YYYY, convert to YYYY-MM-DD for comparison
+    const [month, day, year] = wibDateString.split('/');
+    const todayWIB = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    
+    // Compare dates (only check time if reservation date = today)
+    if (selectedDate !== todayWIB) {
+      // If reservation date is in the future, no restriction
+      return false;
+    }
+    
+    // If reservation date = today, check if current time >= 16:30 WIB
+    const wibTimeString = now.toLocaleString('en-US', { 
+      timeZone: 'Asia/Jakarta',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    
+    // Parse hours and minutes from WIB time string
+    const [hours, minutes] = wibTimeString.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    
+    // Restricted if >= 16:30 (990 minutes)
+    const restrictedStart = 16 * 60 + 30; // 16:30
+    
+    return totalMinutes >= restrictedStart;
+  };
+
+  // Check time restriction on mount and periodically (only for same-day reservations)
+  useEffect(() => {
+    const checkTime = () => {
+      const isRestricted = checkRestrictedTime(formData.tanggalReservasi);
+      setIsRestrictedTime(isRestricted);
+      // Don't auto-show modal, only show when user tries to proceed
+    };
+
+    // Check immediately
+    checkTime();
+
+    // Check every minute
+    const interval = setInterval(checkTime, 60000);
+
+    return () => clearInterval(interval);
+  }, [formData.tanggalReservasi]); // Re-check when reservation date changes
+
   // Fetch available places when date or number of people changes
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -298,6 +386,14 @@ export default function ReservasiPage() {
         setError('Mohon lengkapi semua field yang wajib diisi.');
         return;
       }
+      
+      // Check if current time is restricted for same-day reservations
+      if (checkRestrictedTime(formData.tanggalReservasi)) {
+        setIsRestrictedTime(true);
+        setShowTimeRestrictionModal(true);
+        return;
+      }
+      
       setError('');
       setCurrentStep(2);
     }
@@ -684,7 +780,7 @@ export default function ReservasiPage() {
               <div className="pt-4">
                 <button
                   type="submit"
-                  className="w-full bg-brand-dark text-white px-6 py-3 rounded-lg font-medium hover:bg-brand transition-colors text-sm"
+                  className="w-full px-6 py-3 rounded-lg font-medium transition-colors text-sm bg-brand-dark text-white hover:bg-brand"
                 >
                   Lanjut
                 </button>
@@ -1081,6 +1177,13 @@ export default function ReservasiPage() {
                 <button
                   onClick={async () => {
                     if (submitting) return;
+                    
+                    // Check if current time is restricted for same-day reservations
+                    if (checkRestrictedTime(formData.tanggalReservasi)) {
+                      setIsRestrictedTime(true);
+                      setShowTimeRestrictionModal(true);
+                      return;
+                    }
                     
                     setSubmitting(true);
                     setError('');
@@ -1497,6 +1600,58 @@ export default function ReservasiPage() {
                 Kirim WhatsApp
               </a>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Pembatasan Waktu Reservasi */}
+      {showTimeRestrictionModal && (
+        <div className="fixed inset-0 bg-[rgba(41,4,4,0.55)] flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                  Reservasi Tidak Tersedia
+                </h3>
+                <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 inline-flex h-6 w-6 p-2 items-center justify-center rounded-full bg-amber-500 text-white text-xs font-bold shrink-0">
+                      ⏰
+                    </div>
+                    <div className="space-y-1">
+                      <p className="font-semibold">Pembatasan Waktu Reservasi</p>
+                      <p className="text-amber-800/90 leading-relaxed">
+                        Reservasi untuk <span className="font-semibold">hari ini</span> hanya dapat dilakukan sebelum jam <span className="font-semibold">16:30 WIB</span>.
+                        <br />
+                        <br />
+                        Silakan pilih tanggal reservasi untuk hari esok atau setelahnya, atau lakukan reservasi sebelum jam 16:30 WIB.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setShowTimeRestrictionModal(false);
+                  // Check again after closing to see if still restricted
+                  const stillRestricted = checkRestrictedTime(formData.tanggalReservasi);
+                  setIsRestrictedTime(stillRestricted);
+                }}
+                className="text-neutral-400 hover:text-neutral-600 ml-4 shrink-0"
+              >
+                ✕
+              </button>
+            </div>
+            <button
+              onClick={() => {
+                setShowTimeRestrictionModal(false);
+                const stillRestricted = checkRestrictedTime(formData.tanggalReservasi);
+                setIsRestrictedTime(stillRestricted);
+              }}
+              className="w-full bg-brand-dark text-white px-6 py-3 rounded-lg font-medium hover:bg-brand transition-colors text-sm"
+            >
+              Mengerti
+            </button>
           </div>
         </div>
       )}
