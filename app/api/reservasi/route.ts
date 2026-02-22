@@ -79,12 +79,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate required fields, especially tempat (place) which is mandatory
+    if (!body.tempat || body.tempat.trim() === '') {
+      return NextResponse.json(
+        { error: 'Tempat wajib diisi. Mohon pilih tempat reservasi.' },
+        { status: 400 }
+      );
+    }
+
+    // Format tempat label
+    const formattedTempat = formatReservationPlaceLabel(body.tempat);
+    
+    // Validate that formatted tempat is not empty (in case placeId is invalid)
+    if (!formattedTempat || formattedTempat.trim() === '') {
+      return NextResponse.json(
+        { error: 'Tempat yang dipilih tidak valid. Mohon pilih tempat reservasi yang tersedia.' },
+        { status: 400 }
+      );
+    }
+
     // Prepare data to send to Apps Script
     const payload = {
       nama: body.nama || '',
       jumlahOrang: body.jumlahOrang || '',
       // Allow sending either raw id ("B1") or already formatted ("Semi Outdoor B1").
-      tempat: formatReservationPlaceLabel(body.tempat || ''),
+      tempat: formattedTempat,
       tanggal: body.tanggal || '',
       jam: body.jam || '',
       menu: body.menu || '',
