@@ -80,7 +80,7 @@ export const reservationZones: ReservationZone[] = [
     tables: [
       { id: 'G1', label: 'G1', areaKey: 'Outdoor', minCapacity: 4, maxCapacity: 8, size: 'lg' },
       { id: 'G2', label: 'G2', areaKey: 'Outdoor', minCapacity: 4, maxCapacity: 6, size: 'md' },
-      { id: 'G3', label: 'G3', areaKey: 'Outdoor', minCapacity: 25, maxCapacity: 30, size: 'full' },
+      { id: 'G3', label: 'G3', areaKey: 'Outdoor', minCapacity: 15, maxCapacity: 25, size: 'full' },
       // { id: 'G1', label: 'G1', areaKey: 'Outdoor', minCapacity: 0, maxCapacity: 0, size: 'lg' },
       // { id: 'G2', label: 'G2', areaKey: 'Outdoor', minCapacity: 0, maxCapacity: 0, size: 'md' },
       // { id: 'G3', label: 'G3', areaKey: 'Outdoor', minCapacity: 0, maxCapacity: 0, size: 'full' },
