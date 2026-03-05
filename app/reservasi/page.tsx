@@ -1553,6 +1553,7 @@ export default function ReservasiPage() {
                           fill
                           className="object-contain p-0"
                           sizes="288px"
+                          rel="preload"
                         />
                       </div>
                     </div>
