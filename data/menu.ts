@@ -27,18 +27,18 @@ export const menuData: MenuItem[] = [
     image: getImagePath('bundling/4'),
     isRamadhan: true,
   },
-  // {
-  //   id: 'bd-2',
-  //   name: '[BUNDLING] - Ricebowl Chicken Popcorn Creamy Mushroom + Tea',
-  //   description: 'Rice bowl Chicken Popcorn Creamy Mushroom + Lychee Tea / Lemon Tea',
-  //   kategori: [
-  //     { jenis: 'Lychee Tea', harga: 43000 },
-  //     { jenis: 'Lemon Tea', harga: 43000 },
-  //   ],
-  //   category: 'bundle',
-  //   image: getImagePath('bundling/5'),
-  //   isRamadhan: true,
-  // },
+  {
+    id: 'bd-2',
+    name: '[BUNDLING] - Ricebowl Chicken Popcorn Creamy Mushroom + Tea',
+    description: 'Rice bowl Chicken Popcorn Creamy Mushroom + Lychee Tea / Lemon Tea',
+    kategori: [
+      { jenis: 'Lychee Tea', harga: 43000 },
+      { jenis: 'Lemon Tea', harga: 43000 },
+    ],
+    category: 'bundle',
+    image: getImagePath('bundling/5'),
+    isRamadhan: true,
+  },
   {
     id: 'bd-3',
     name: '[BUNDLING] - Ricebowl Chicken Popcorn BBQ Sauce + Tea',
@@ -497,14 +497,14 @@ export const menuData: MenuItem[] = [
     category: 'ricebowl',
     image: getImagePath('ricebowl/Beef Yakiniku'),
   },
-  // { 
-  //   id: 'rb-3',
-  //   name: 'Chicken Popcorn Creamy Mushroom',
-  //   description: 'Perpaduan Nasi dengan Ayam Dibalut Dengan Mushroom Sauce',
-  //   kategori: [{ jenis: 'Normal', harga: 29000 }],
-  //   category: 'ricebowl',
-  //   image: getImagePath('ricebowl/Chicken Popcorn Creamy Mushroom'),
-  // },
+  { 
+    id: 'rb-3',
+    name: 'Chicken Popcorn Creamy Mushroom',
+    description: 'Perpaduan Nasi dengan Ayam Dibalut Dengan Mushroom Sauce',
+    kategori: [{ jenis: 'Normal', harga: 29000 }],
+    category: 'ricebowl',
+    image: getImagePath('ricebowl/Chicken Popcorn Creamy Mushroom'),
+  },
   // { 
   //   id: 'rb-4',
   //   name: 'Chicken Popcorn Korean Sauce',
@@ -735,22 +735,22 @@ export const menuData: MenuItem[] = [
     category: 'spaghetti',
     image: getImagePath('spaghetti/Spaghetti Bolognese'),
   },
-  // {
-  //   id: 'sp-3',
-  //   name: 'Spaghetti Aglio Olio',
-  //   description: 'Spaghetti Dengan Saus Aglio Olio Yang Manis Dan Gurih',
-  //   kategori: [{ jenis: 'Normal', harga: 28000 }],
-  //   category: 'spaghetti',
-  //   image: getImagePath('spaghetti/Spaghetti Aglio Olio'),
-  // },
-  // {
-  //   id: 'sp-4',
-  //   name: 'Spaghetti Creamy Mushroom',
-  //   description: 'Spaghetti Dengan Saus Creamy Mushroom Yang Manis Dan Gurih',
-  //   kategori: [{ jenis: 'Normal', harga: 28000 }],
-  //   category: 'spaghetti',
-  //   image: getImagePath('spaghetti/Spaghetti Creamy Mushroom'),
-  // },
+  {
+    id: 'sp-3',
+    name: 'Spaghetti Aglio Olio',
+    description: 'Spaghetti Dengan Saus Aglio Olio Yang Manis Dan Gurih',
+    kategori: [{ jenis: 'Normal', harga: 28000 }],
+    category: 'spaghetti',
+    image: getImagePath('spaghetti/Spaghetti Aglio Olio'),
+  },
+  {
+    id: 'sp-4',
+    name: 'Spaghetti Creamy Mushroom',
+    description: 'Spaghetti Dengan Saus Creamy Mushroom Yang Manis Dan Gurih',
+    kategori: [{ jenis: 'Normal', harga: 28000 }],
+    category: 'spaghetti',
+    image: getImagePath('spaghetti/Spaghetti Creamy Mushroom'),
+  },
 
   // Sweet Treats
   {
